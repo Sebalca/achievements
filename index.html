@@ -375,7 +375,7 @@
 
   var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
-  var APP_VERSION = "v0.10.1";
+  var APP_VERSION = "v0.11";
   var SITE_ID = "achievements";
   var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -630,14 +630,43 @@
     });
   });
 
+  var realtimeChannel = null;
+
+  function subscribeRealtime() {
+    if (realtimeChannel) return;
+    realtimeChannel = sb.channel("goal_completions_" + userId)
+      .on("postgres_changes", { event: "*", schema: "public", table: "goal_completions" }, handleRealtimeCompletion)
+      .subscribe();
+  }
+  function unsubscribeRealtime() {
+    if (realtimeChannel) { sb.removeChannel(realtimeChannel); realtimeChannel = null; }
+  }
+  function handleRealtimeCompletion(payload) {
+    if (payload.eventType === "INSERT") {
+      var r = payload.new;
+      var exists = allCompletions.some(function (x) { return x.goal_id === r.goal_id && x.user_id === r.user_id; });
+      if (!exists) allCompletions.push({ goal_id: r.goal_id, user_id: r.user_id, done_at: r.done_at });
+    } else if (payload.eventType === "DELETE") {
+      var old = payload.old;
+      allCompletions = allCompletions.filter(function (x) { return !(x.goal_id === old.goal_id && x.user_id === old.user_id); });
+    } else {
+      return;
+    }
+    rebuildCompletionMaps();
+    recomputeEffective();
+    renderDetail(); renderSubcats();
+  }
+
   function handleAuthState(session) {
     if (session && session.user) {
       loggedIn = true; userId = session.user.id; userEmail = session.user.email;
       loadCloudData().then(function (needsOnboarding) {
         renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView();
+        subscribeRealtime();
         if (needsOnboarding) openOnboarding();
       });
     } else {
+      unsubscribeRealtime();
       loggedIn = false; userId = null; userEmail = null; isAdmin = false;
       renderAuth();
     }
@@ -1301,6 +1330,6 @@
 })();
 </script>
 
-<!-- v0.10.1 -->
+<!-- v0.11 -->
 </body>
 </html>
