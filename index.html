@@ -54,7 +54,7 @@
   .subcat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
   .subcat-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 16px 14px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow); transition: border-color .15s ease; }
   .subcat-card:hover { border-color: var(--gold); }
-  .subcat-card .top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-right: 44px; }
+  .subcat-card .top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-right: 64px; }
   .subcat-card .ico { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
   .subcat-card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.02rem; margin: 0; }
   .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
@@ -269,7 +269,7 @@
 
 <div class="modal hidden" id="suggestModal">
   <div class="box">
-    <button class="xclose" id="sgClose" aria-label="fechar">&times;</button>
+    <button class="xclose" id="sgClose" type="button" aria-label="fechar">&times;</button>
     <h3 data-i18n="sg_title">Sugestões</h3>
     <div class="msub" data-i18n="sg_sub">Conta o que melhorar ou reportar.</div>
     <label data-i18n="sg_msg">Mensagem</label>
@@ -279,8 +279,8 @@
     <label data-i18n="sg_email">Email (opcional)</label>
     <input id="sgEmail" type="email" placeholder="nome@exemplo.pt">
     <div class="mbtns">
-      <button class="act pri" id="sgSend" data-i18n="sg_send">Enviar</button>
-      <button class="act" id="sgCancel" data-i18n="btn_cancel">Cancelar</button>
+      <button class="act pri" id="sgSend" type="button" data-i18n="sg_send">Enviar</button>
+      <button class="act" id="sgCancel" type="button" data-i18n="btn_cancel">Cancelar</button>
     </div>
     <div class="msg" id="sgMsgOut"></div>
   </div>
@@ -326,6 +326,24 @@
   </div>
 </div>
 
+<div class="overlay" id="shareOverlay">
+  <div class="modal">
+    <h2 id="shareModalTitle">Partilhar</h2>
+    <div class="modal-body">
+      <p style="font-size:0.84rem;color:var(--ink-soft);margin-top:-6px">As pessoas que aceitarem veem o mesmo progresso desta subcategoria, ao vivo.</p>
+      <div class="links-chips" id="shareMembersList" style="margin-bottom:14px"></div>
+      <div class="field" style="display:flex;gap:8px;align-items:flex-start">
+        <input type="email" id="shareInviteEmail" placeholder="nome@exemplo.pt" style="flex:1">
+        <button class="btn secondary" type="button" id="shareInviteAdd" style="flex:0 0 auto;padding:10px 14px">Convidar</button>
+      </div>
+      <div class="field-hint" id="shareInviteMsg"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" id="shareClose" style="flex:1">Fechar</button>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="onboardingOverlay">
   <div class="modal">
     <h2>Bem-vindo! Escolhe as tuas categorias</h2>
@@ -357,19 +375,19 @@
 
   var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
-  var APP_VERSION = "v0.8.2";
+  var APP_VERSION = "v0.10.1";
   var SITE_ID = "achievements";
   var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
   // Cola aqui o URL /exec da tua Google Apps Script Web App de sugestões (o mesmo do outro projeto, depois de adicionares a coluna "Site")
-  var SUGGESTIONS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx7Zw-eJ-n25TcOLfuAqnrH6tFaojIu8k5LMjm84d5dzE6R_DFOLANcZPMLGAGgfJI78g/exec";
+  var SUGGESTIONS_WEBHOOK_URL = "COLOCA_AQUI_O_URL_DO_APPS_SCRIPT";
 
   var K_CATS = "ach_categories_v2";
   var K_SUBCATS = "ach_subcats_v2";
   var K_GOALS = "ach_goals_v4";
   var K_THEME = "ach_theme_v1";
   var K_ACTIVE_CAT = "ach_active_cat_v2";
-  var K_COMPLETIONS = "ach_completions_v1";
+  var K_COMPLETIONS = "ach_completions_v2";
 
   var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   function formatDate(iso) {
@@ -436,7 +454,17 @@
   var activeCat = load(K_ACTIVE_CAT, categories[0].id);
 
   var loggedIn = false, userId = null, userEmail = null, isAdmin = false;
-  var explicitDoneMap = load(K_COMPLETIONS, {});
+  var allCompletions = load(K_COMPLETIONS, []);
+  var completionsByGoal = {};
+  var myCompletionByGoal = {};
+  function rebuildCompletionMaps() {
+    completionsByGoal = {}; myCompletionByGoal = {};
+    allCompletions.forEach(function (r) {
+      if (!completionsByGoal.hasOwnProperty(r.goal_id) || r.done_at < completionsByGoal[r.goal_id]) completionsByGoal[r.goal_id] = r.done_at;
+      if (!loggedIn || r.user_id === userId) myCompletionByGoal[r.goal_id] = r.done_at;
+    });
+  }
+  rebuildCompletionMaps();
   var effectiveMemo = {};
   var effectiveDateMemo = {};
   var editingSubcat = null;
@@ -474,6 +502,9 @@
     authPassword: document.getElementById("auth-password"), authMsg: document.getElementById("authMsg"),
     authSignin: document.getElementById("authSignin"), authSignup: document.getElementById("authSignup"), authCancel: document.getElementById("authCancel"),
     onboardingOverlay: document.getElementById("onboardingOverlay"), onboardingList: document.getElementById("onboardingList"), onboardingSave: document.getElementById("onboardingSave"),
+    shareOverlay: document.getElementById("shareOverlay"), shareModalTitle: document.getElementById("shareModalTitle"),
+    shareMembersList: document.getElementById("shareMembersList"), shareInviteEmail: document.getElementById("shareInviteEmail"),
+    shareInviteAdd: document.getElementById("shareInviteAdd"), shareInviteMsg: document.getElementById("shareInviteMsg"), shareClose: document.getElementById("shareClose"),
     versionFooter: document.getElementById("versionFooter"),
     suggestModal: document.getElementById("suggestModal"), openSuggest: document.getElementById("openSuggest"),
     sgMsg: document.getElementById("sgMsg"), sgName: document.getElementById("sgName"), sgEmail: document.getElementById("sgEmail"),
@@ -494,7 +525,7 @@
   function isGoalDone(it) { return !!effectiveMemo[it.id]; }
   function goalDate(it) { return effectiveDateMemo[it.id] || null; }
   function implierTitle(it) {
-    if (explicitDoneMap.hasOwnProperty(it.id)) return null;
+    if (completionsByGoal.hasOwnProperty(it.id)) return null;
     for (var i = 0; i < goals.length; i++) {
       var gl = goals[i];
       if (gl.id !== it.id && gl.implies && gl.implies.indexOf(it.id) !== -1 && effectiveMemo[gl.id]) return gl.title;
@@ -506,7 +537,7 @@
     function resolve(id, stack) {
       if (memoDone.hasOwnProperty(id)) return;
       if (stack.indexOf(id) !== -1) { memoDone[id] = false; memoDate[id] = null; return; }
-      if (explicitDoneMap.hasOwnProperty(id)) { memoDone[id] = true; memoDate[id] = explicitDoneMap[id]; return; }
+      if (completionsByGoal.hasOwnProperty(id)) { memoDone[id] = true; memoDate[id] = completionsByGoal[id]; return; }
       var foundDone = false, foundDate = null;
       for (var i = 0; i < goals.length; i++) {
         var gl = goals[i];
@@ -548,6 +579,8 @@
       els.sgMsgOut.textContent = "O envio de sugestões ainda não está configurado.";
       return;
     }
+    els.sgSend.disabled = true;
+    els.sgMsgOut.textContent = "A enviar...";
     var body = new URLSearchParams({
       message: message, name: els.sgName.value.trim(), email: els.sgEmail.value.trim(),
       version: APP_VERSION, lang: "pt-PT", site: "achievements"
@@ -557,7 +590,8 @@
         els.sgMsgOut.textContent = "Obrigado! A sugestão foi enviada.";
         els.sgMsg.value = ""; els.sgName.value = ""; els.sgEmail.value = "";
       })
-      .catch(function () { els.sgMsgOut.textContent = "Não foi possível enviar agora. Tenta mais tarde."; });
+      .catch(function () { els.sgMsgOut.textContent = "Não foi possível enviar agora. Tenta mais tarde."; })
+      .finally(function () { els.sgSend.disabled = false; });
   });
 
   /* ---------- Auth ---------- */
@@ -624,8 +658,14 @@
     subcats = items.filter(function (r) { return r.kind === "subcategory"; }).map(function (r) { return { id: r.id, categoryId: r.category_id, icon: r.icon, name: r.title }; });
     goals = items.filter(function (r) { return r.kind === "goal"; }).map(function (r) { return { id: r.id, subcategoryIds: r.subcategory_ids || [], tag: r.tag || "", title: r.title, notas: r.notas || "", implies: r.implies || [] }; });
 
-    var completions = await fetchSiteRow("concluidos");
-    explicitDoneMap = completions && typeof completions === "object" && !Array.isArray(completions) ? completions : {};
+    // aceita automaticamente qualquer convite de partilha pendente para o meu email
+    if (userEmail) {
+      await sb.from("subcategory_shares").update({ status: "accepted", invited_user_id: userId }).eq("status", "pending").ilike("invited_email", userEmail);
+    }
+
+    var compRes = await sb.from("goal_completions").select("goal_id,user_id,done_at");
+    allCompletions = compRes.data || [];
+    rebuildCompletionMaps();
     recomputeEffective();
 
     var settings = await fetchSiteRow("definicoes");
@@ -652,7 +692,6 @@
     if (loggedIn) saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
     else { save(K_THEME, theme); save(K_CATS, categories); }
   }
-  function persistCompletions() { if (loggedIn) saveKey("concluidos", explicitDoneMap); else save(K_COMPLETIONS, explicitDoneMap); }
 
   /* ---------- Onboarding (first login) ---------- */
   function openOnboarding() {
@@ -734,6 +773,14 @@
 
       var actions = document.createElement("div");
       actions.className = "card-actions";
+      if (loggedIn) {
+        var shareBtn = document.createElement("button");
+        shareBtn.className = "icon-btn";
+        shareBtn.setAttribute("aria-label", "Partilhar subcategoria");
+        shareBtn.textContent = "\ud83d\udc65";
+        shareBtn.addEventListener("click", function () { openShareModal(s); });
+        actions.appendChild(shareBtn);
+      }
       var editBtn = document.createElement("button");
       editBtn.className = "icon-btn";
       editBtn.setAttribute("aria-label", "Editar subcategoria");
@@ -883,6 +930,58 @@
 
   els.backToSubcats.addEventListener("click", function () { achView = "subcats"; renderAchView(); });
 
+  /* ---------- Share subcategory (live shared progress) ---------- */
+  var sharingSubcat = null;
+  function openShareModal(s) {
+    sharingSubcat = s;
+    els.shareModalTitle.textContent = "Partilhar \u201c" + s.name + "\u201d";
+    els.shareInviteEmail.value = "";
+    els.shareInviteMsg.textContent = "";
+    els.shareOverlay.classList.add("show");
+    refreshShareMembers(s);
+  }
+  function closeShareModal() { els.shareOverlay.classList.remove("show"); sharingSubcat = null; }
+  els.shareClose.addEventListener("click", closeShareModal);
+  els.shareOverlay.addEventListener("click", function (e) { if (e.target === els.shareOverlay) closeShareModal(); });
+
+  function refreshShareMembers(s) {
+    els.shareMembersList.innerHTML = "<span style=\"font-size:0.8rem;color:var(--ink-soft)\">A carregar...</span>";
+    sb.from("subcategory_shares").select("id,invited_email,status,owner_id").eq("subcategory_id", s.id).then(function (res) {
+      var rows = res.data || [];
+      els.shareMembersList.innerHTML = "";
+      if (rows.length === 0) {
+        els.shareMembersList.innerHTML = "<span style=\"font-size:0.8rem;color:var(--ink-soft)\">Ainda não convidaste ninguém para esta subcategoria.</span>";
+        return;
+      }
+      rows.forEach(function (r) {
+        var chip = document.createElement("span");
+        chip.className = "chip";
+        chip.appendChild(document.createTextNode(r.invited_email + (r.status === "accepted" ? " \u2713" : " (pendente)")));
+        if (r.owner_id === userId) {
+          var xBtn = document.createElement("button");
+          xBtn.type = "button";
+          xBtn.textContent = "\u00d7";
+          xBtn.addEventListener("click", function () {
+            sb.from("subcategory_shares").delete().eq("id", r.id).then(function () { refreshShareMembers(s); });
+          });
+          chip.appendChild(xBtn);
+        }
+        els.shareMembersList.appendChild(chip);
+      });
+    });
+  }
+  els.shareInviteAdd.addEventListener("click", function () {
+    if (!sharingSubcat) return;
+    var email = els.shareInviteEmail.value.trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { els.shareInviteEmail.focus(); return; }
+    sb.from("subcategory_shares").insert({ subcategory_id: sharingSubcat.id, owner_id: userId, invited_email: email }).then(function (res) {
+      if (res.error) { els.shareInviteMsg.textContent = "Já convidaste este email para esta subcategoria."; return; }
+      els.shareInviteEmail.value = "";
+      els.shareInviteMsg.textContent = "";
+      refreshShareMembers(sharingSubcat);
+    });
+  });
+
   /* ---------- Data mutations ---------- */
   function addSubcat(name, icon) {
     if (loggedIn) {
@@ -949,10 +1048,18 @@
     else save(K_GOALS, goals);
   }
   function toggleGoal(it) {
-    var now = new Date().toISOString();
-    if (explicitDoneMap.hasOwnProperty(it.id)) delete explicitDoneMap[it.id];
-    else explicitDoneMap[it.id] = now;
-    persistCompletions();
+    var mine = myCompletionByGoal[it.id];
+    var myKey = loggedIn ? userId : "local";
+    if (mine) {
+      allCompletions = allCompletions.filter(function (r) { return !(r.goal_id === it.id && r.user_id === myKey); });
+      if (loggedIn) sb.from("goal_completions").delete().eq("goal_id", it.id).eq("user_id", userId).then(function () {});
+    } else {
+      var row = { goal_id: it.id, user_id: myKey, done_at: new Date().toISOString() };
+      allCompletions.push(row);
+      if (loggedIn) sb.from("goal_completions").upsert(row).then(function () {});
+    }
+    if (!loggedIn) save(K_COMPLETIONS, allCompletions);
+    rebuildCompletionMaps();
     recomputeEffective();
     renderDetail(); renderSubcats();
   }
@@ -1194,6 +1301,6 @@
 })();
 </script>
 
-<!-- v0.8.2 -->
+<!-- v0.10.1 -->
 </body>
 </html>
