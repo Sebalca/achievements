@@ -7,56 +7,28 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
-    --bg: #EDE4CC;
-    --surface: #F8F2E1;
-    --surface-2: #F1E8D2;
-    --ink: #1B2A22;
-    --ink-soft: #56624F;
-    --gold: #B8862F;
-    --gold-soft: rgba(184,134,47,0.16);
-    --rust: #9C3B2B;
-    --line: rgba(27,42,34,0.16);
-    --shadow: rgba(27,42,34,0.10);
+    --bg: #EDE4CC; --surface: #F8F2E1; --surface-2: #F1E8D2;
+    --ink: #1B2A22; --ink-soft: #56624F; --gold: #B8862F; --gold-soft: rgba(184,134,47,0.16);
+    --rust: #9C3B2B; --line: rgba(27,42,34,0.16); --shadow: rgba(27,42,34,0.10);
     --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
     --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   }
   html[data-theme="dark"] {
-    --bg: #10160E;
-    --surface: #1C2A21;
-    --surface-2: #22322A;
-    --ink: #EDE4CC;
-    --ink-soft: #B4AC8F;
-    --gold: #D4A24C;
-    --gold-soft: rgba(212,162,76,0.18);
-    --rust: #C56548;
-    --line: rgba(237,228,204,0.14);
-    --shadow: rgba(0,0,0,0.35);
+    --bg: #10160E; --surface: #1C2A21; --surface-2: #22322A;
+    --ink: #EDE4CC; --ink-soft: #B4AC8F; --gold: #D4A24C; --gold-soft: rgba(212,162,76,0.18);
+    --rust: #C56548; --line: rgba(237,228,204,0.14); --shadow: rgba(0,0,0,0.35);
   }
   * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--ink);
-    font-family: var(--font-body);
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    transition: background .25s ease, color .25s ease;
-  }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); -webkit-font-smoothing: antialiased; min-height: 100vh; transition: background .25s ease, color .25s ease; }
   a, button { font-family: inherit; }
 
-  .masthead {
-    max-width: 960px; margin: 0 auto; padding: 18px 18px 0;
-    display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;
-  }
+  .masthead { max-width: 960px; margin: 0 auto; padding: 18px 18px 0; display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; }
   .brand h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; letter-spacing: 0.3px; margin: 0; }
   .brand p { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.82rem; }
   .nav-row { display: flex; align-items: center; gap: 14px; }
   .primary-tabs { display: flex; gap: 4px; }
-  .primary-tabs button {
-    background: none; border: none; padding: 8px 4px; margin-right: 18px;
-    font-size: 0.95rem; color: var(--ink-soft); cursor: pointer; position: relative; font-family: var(--font-display);
-  }
+  .primary-tabs button { background: none; border: none; padding: 8px 4px; margin-right: 18px; font-size: 0.95rem; color: var(--ink-soft); cursor: pointer; position: relative; font-family: var(--font-display); }
   .primary-tabs button.active { color: var(--ink); }
   .primary-tabs button.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--rust); }
   .auth-divider { width: 1px; height: 18px; background: var(--line); }
@@ -64,20 +36,10 @@
   .auth-btn:hover { color: var(--ink); border-color: var(--gold); }
   .auth-btn.logged { border-color: var(--gold); color: var(--ink); }
 
-  .config-banner {
-    max-width: 960px; margin: 10px auto 0; padding: 10px 18px; font-size: 0.78rem;
-    color: var(--ink-soft); background: var(--gold-soft); border: 1px solid var(--gold); border-radius: 8px; display: none;
-  }
-  .config-banner.show { display: block; }
-
   main { max-width: 960px; margin: 0 auto; padding: 14px 18px 60px; border-top: 1px solid var(--line); margin-top: 14px; }
 
   .category-strip { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 0; }
-  .cat-tab {
-    flex: 0 0 auto; display: flex; align-items: center; gap: 6px;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
-    padding: 7px 14px 7px 10px; cursor: pointer; color: var(--ink-soft); font-size: 0.86rem; white-space: nowrap;
-  }
+  .cat-tab { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 7px 14px 7px 10px; cursor: pointer; color: var(--ink-soft); font-size: 0.86rem; white-space: nowrap; }
   .cat-tab .ico { font-size: 1rem; }
   .cat-tab.active { background: var(--gold-soft); border-color: var(--gold); color: var(--ink); font-weight: 600; }
 
@@ -86,24 +48,19 @@
   .back-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
   .back-btn { background: none; border: none; color: var(--ink-soft); font-size: 0.86rem; cursor: pointer; padding: 4px 0; }
   .back-btn:hover { color: var(--ink); }
-  .add-btn {
-    background: var(--ink); color: var(--bg); border: none; border-radius: 999px;
-    padding: 9px 16px; font-size: 0.86rem; cursor: pointer; font-weight: 600; white-space: nowrap;
-  }
+  .add-btn { background: var(--ink); color: var(--bg); border: none; border-radius: 999px; padding: 9px 16px; font-size: 0.86rem; cursor: pointer; font-weight: 600; white-space: nowrap; }
   html[data-theme="dark"] .add-btn { background: var(--gold); color: #14200F; }
 
   .subcat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
-  .subcat-card {
-    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-    padding: 16px 16px 14px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow); transition: border-color .15s ease;
-  }
+  .subcat-card { position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 16px 14px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow); transition: border-color .15s ease; }
   .subcat-card:hover { border-color: var(--gold); }
-  .subcat-card .top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .subcat-card .ico {
-    width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line);
-    display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
-  }
+  .subcat-card .top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; padding-right: 44px; }
+  .subcat-card .ico { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
   .subcat-card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.02rem; margin: 0; }
+  .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
+  .icon-btn { background: none; border: none; color: var(--ink-soft); font-size: 0.92rem; cursor: pointer; opacity: 0.6; padding: 2px 4px; }
+  .icon-btn:hover { opacity: 1; }
+  .icon-btn.danger:hover { color: var(--rust); }
   .bar { height: 7px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
   .bar .fill { height: 100%; background: linear-gradient(90deg, var(--gold-soft), var(--gold)); }
   .subcat-card .count { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-soft); }
@@ -115,28 +72,26 @@
   .detail-progress .bar { height: 8px; margin-bottom: 6px; }
   .detail-progress .label { font-size: 0.8rem; color: var(--ink-soft); text-align: center; }
   .goal-list { display: flex; flex-direction: column; gap: 8px; }
-  .goal-item {
-    display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line);
-    border-radius: 10px; padding: 11px 12px; cursor: pointer; user-select: none;
-  }
+  .goal-item { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; user-select: none; }
   .goal-item.done { background: var(--gold-soft); border-color: var(--gold); }
-  .goal-item .gcheck {
-    flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gold);
-    display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: var(--gold);
-  }
+  .goal-item .gcheck { flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: var(--gold); cursor: pointer; margin-top: 1px; }
   .goal-item.done .gcheck { background: var(--gold); color: var(--surface); }
-  .goal-item .ginfo { flex: 1; min-width: 0; }
+  .goal-item .ginfo { flex: 1; min-width: 0; cursor: pointer; }
   .goal-item .gtag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.05em; color: var(--gold); text-transform: uppercase; display: block; }
   .goal-item .gtitle { font-size: 0.94rem; }
   .goal-item.done .gtitle { color: var(--ink-soft); text-decoration: line-through; }
-  .goal-item .gdel { background: none; border: none; color: var(--ink-soft); font-size: 1.05rem; cursor: pointer; opacity: 0.5; flex-shrink: 0; }
-  .goal-item .gdel:hover { opacity: 1; color: var(--rust); }
+  .goal-item .gimplied { font-size: 0.72rem; color: var(--ink-soft); margin-top: 3px; font-style: italic; }
+  .goal-item .glinks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px 3px 10px; font-size: 0.72rem; color: var(--ink-soft); }
+  .chip button { background: none; border: none; color: var(--ink-soft); cursor: pointer; font-size: 0.85rem; padding: 0; line-height: 1; }
+  .chip button:hover { color: var(--rust); }
+  .goal-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
+  .goal-actions .icon-btn { opacity: 0.7; }
+  .link-action { display: flex; align-items: center; gap: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; font-size: 0.74rem; color: var(--ink-soft); cursor: pointer; white-space: nowrap; }
+  .link-action:hover { border-color: var(--gold); color: var(--ink); }
 
   .settings-section { margin-bottom: 28px; }
-  .settings-section h2 {
-    font-family: var(--font-display); font-weight: 400; font-size: 1.05rem;
-    margin: 14px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
-  }
+  .settings-section h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; margin: 14px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
   .row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
   .row:last-child { border-bottom: none; }
   .row .left { display: flex; align-items: center; gap: 10px; }
@@ -155,12 +110,22 @@
   .modal { background: var(--surface); width: 100%; max-width: 440px; border-radius: 14px 14px 0 0; padding: 20px 20px 24px; max-height: 88vh; overflow-y: auto; }
   @media (min-width: 560px) { .modal { border-radius: 14px; } }
   .modal h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 16px; }
-  .field { margin-bottom: 14px; }
+  .field { margin-bottom: 14px; position: relative; }
   .field label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 5px; }
-  .field input[type=text], .field input[type=email], .field input[type=password] {
+  .field input[type=text], .field input[type=email], .field input[type=password], .field select {
     width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
     padding: 10px 11px; color: var(--ink); font-size: 0.92rem; font-family: inherit;
   }
+  .autocomplete-list {
+    position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 4px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
+    max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px var(--shadow);
+  }
+  .autocomplete-list.show { display: block; }
+  .autocomplete-item { padding: 8px 11px; font-size: 0.88rem; cursor: pointer; }
+  .autocomplete-item:hover, .autocomplete-item.active { background: var(--gold-soft); }
+  .autocomplete-item .ac-sub { display: block; font-size: 0.7rem; color: var(--ink-soft); }
+  .field-hint { font-size: 0.72rem; color: var(--ink-soft); margin-top: 4px; }
   .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
   .btn { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
   .btn.primary { background: var(--ink); color: var(--bg); }
@@ -189,10 +154,6 @@
   </div>
 </div>
 
-<div class="config-banner" id="configBanner">
-  Para ativar contas e sincronização, define SUPABASE_URL e SUPABASE_ANON_KEY no início do &lt;script&gt; deste ficheiro.
-</div>
-
 <main>
   <section id="view-ach">
     <div class="category-strip" id="categoryStrip"></div>
@@ -204,9 +165,7 @@
       <div id="subcatGrid" class="subcat-grid"></div>
     </div>
     <div id="detailView" style="display:none">
-      <div class="back-row">
-        <button class="back-btn" id="backToSubcats">&larr; Voltar</button>
-      </div>
+      <div class="back-row"><button class="back-btn" id="backToSubcats">&larr; Voltar</button></div>
       <div class="toolbar">
         <span class="cat-heading" id="subcatHeading"></span>
         <button class="add-btn" id="openAddGoal">+ Novo objetivo</button>
@@ -222,16 +181,11 @@
   <section id="view-settings" style="display:none">
     <div class="settings-section">
       <h2>Conta</h2>
-      <div class="row">
-        <div class="account-info" id="accountInfo">Não tens sessão iniciada — os dados ficam guardados só neste dispositivo.</div>
-      </div>
+      <div class="row"><div class="account-info" id="accountInfo">Não tens sessão iniciada — os dados ficam guardados só neste dispositivo.</div></div>
     </div>
     <div class="settings-section">
       <h2>Aparência</h2>
-      <div class="row">
-        <div class="left">Modo escuro</div>
-        <div class="switch" id="darkSwitch"><div class="knob"></div></div>
-      </div>
+      <div class="row"><div class="left">Modo escuro</div><div class="switch" id="darkSwitch"><div class="knob"></div></div></div>
     </div>
     <div class="settings-section">
       <h2>Categorias visíveis</h2>
@@ -249,11 +203,31 @@
     </div>
     <div id="goalFields" style="display:none">
       <div class="field"><label for="f-goal-tag">Etiqueta (opcional)</label><input type="text" id="f-goal-tag" placeholder="Ex.: 2024, Europa..."></div>
-      <div class="field"><label for="f-goal-title">Objetivo</label><input type="text" id="f-goal-title" placeholder="Ex.: Correr os primeiros 10km"></div>
+      <div class="field">
+        <label for="f-goal-title">Objetivo</label>
+        <input type="text" id="f-goal-title" placeholder="Escreve para procurar ou criar um objetivo" autocomplete="off">
+        <div class="autocomplete-list" id="goalAutocomplete"></div>
+        <div class="field-hint" id="goalHint"></div>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn secondary" id="cancelModal">Cancelar</button>
       <button class="btn primary" id="saveModal">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="connectOverlay">
+  <div class="modal">
+    <h2>Ligar a outro objetivo</h2>
+    <p style="font-size:0.84rem;color:var(--ink-soft);margin-top:-8px">Se marcares "<span id="connectFromTitle"></span>" como feito, o objetivo escolhido conta automaticamente como feito também (só nesse sentido).</p>
+    <div class="field">
+      <label for="connect-select">Objetivo a marcar automaticamente</label>
+      <select id="connect-select"></select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="connectCancel">Cancelar</button>
+      <button class="btn primary" id="connectSave">Ligar</button>
     </div>
   </div>
 </div>
@@ -276,22 +250,14 @@
 (function () {
   "use strict";
 
-  /* =========================================================
-     SUPABASE — projeto partilhado da plataforma (frisk.pt)
-     Mesma conta/base de dados usada por outros sites (ex.: 3D Press).
-     Este site usa a tabela genérica "user_site_data" (site_id = "achievements"),
-     já preparada para o padrão multi-site: nada de tabelas dedicadas.
-     ========================================================= */
   var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
   var SITE_ID = "achievements";
-
-  var cloudEnabled = SUPABASE_URL.indexOf("COLOCA_AQUI") === -1 && SUPABASE_ANON_KEY.indexOf("COLOCA_AQUI") === -1;
-  var sb = cloudEnabled && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+  var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
   var K_CATS = "ach_categories_v2";
   var K_SUBCATS = "ach_subcats_v2";
-  var K_GOALS = "ach_goals_v2";
+  var K_GOALS = "ach_goals_v3";
   var K_THEME = "ach_theme_v1";
   var K_ACTIVE_CAT = "ach_active_cat_v2";
 
@@ -305,170 +271,45 @@
     { id: "leitura",     name: "Leitura & Aprendizagem", icon: "\ud83d\udcda", enabled: true },
     { id: "hobbies",     name: "Hobbies & Criatividade", icon: "\ud83c\udfa8", enabled: true }
   ];
-
   function sc(id, categoryId, icon, name) { return { id: id, categoryId: categoryId, icon: icon, name: name }; }
-
   var defaultSubcats = [
-    sc("pes-1", "pessoal", "\ud83c\udf31", "Marcos de crescimento pessoal"),
-    sc("pes-2", "pessoal", "\u2705", "Hábitos e disciplina"),
-    sc("pes-3", "pessoal", "\ud83e\udd4a", "Superação de medos"),
-    sc("via-1", "viagens", "\ud83c\udf0d", "Continentes visitados"),
-    sc("via-2", "viagens", "\ud83c\udfd5\ufe0f", "Tipos de viagem"),
-    sc("via-3", "viagens", "\ud83d\udd4c", "Maravilhas do mundo"),
-    sc("res-1", "restauracao", "\ud83c\udf5c", "Cozinhas do mundo"),
-    sc("res-2", "restauracao", "\u2b50", "Experiências gastronómicas"),
-    sc("res-3", "restauracao", "\ud83d\udc68\u200d\ud83c\udf73", "Desafios na cozinha"),
-    sc("cin-1", "cinema", "\ud83c\udfc6", "Vencedores do Óscar de Melhor Filme"),
-    sc("cin-2", "cinema", "\ud83c\udfa5", "Realizadores incontornáveis"),
-    sc("cin-3", "cinema", "\ud83c\udf9e\ufe0f", "Clássicos por década"),
-    sc("des-1", "desporto", "\ud83c\udfc3", "Corrida"),
-    sc("des-2", "desporto", "\ud83e\uddd7", "Experiências desportivas"),
-    sc("des-3", "desporto", "\ud83d\udcc6", "Consistência"),
-    sc("car-1", "carreira", "\ud83d\ude80", "Marcos profissionais"),
-    sc("car-2", "carreira", "\ud83d\udcc8", "Desenvolvimento"),
-    sc("car-3", "carreira", "\ud83d\udca1", "Empreendedorismo"),
-    sc("lei-1", "leitura", "\ud83d\udcd6", "Géneros literários"),
-    sc("lei-2", "leitura", "\ud83d\udd01", "Hábito de leitura"),
-    sc("lei-3", "leitura", "\ud83c\udf93", "Novas competências"),
-    sc("hob-1", "hobbies", "\ud83d\udd8c\ufe0f", "Expressão criativa"),
-    sc("hob-2", "hobbies", "\ud83d\udd28", "Projetos manuais"),
-    sc("hob-3", "hobbies", "\ud83e\udd1d", "Partilha")
+    sc("pes-1","pessoal","\ud83c\udf31","Marcos de crescimento pessoal"), sc("pes-2","pessoal","\u2705","Hábitos e disciplina"), sc("pes-3","pessoal","\ud83e\udd4a","Superação de medos"),
+    sc("via-1","viagens","\ud83c\udf0d","Continentes visitados"), sc("via-2","viagens","\ud83c\udfd5\ufe0f","Tipos de viagem"), sc("via-3","viagens","\ud83d\udd4c","Maravilhas do mundo"),
+    sc("res-1","restauracao","\ud83c\udf5c","Cozinhas do mundo"), sc("res-2","restauracao","\u2b50","Experiências gastronómicas"), sc("res-3","restauracao","\ud83d\udc68\u200d\ud83c\udf73","Desafios na cozinha"),
+    sc("cin-1","cinema","\ud83c\udfc6","Vencedores do Óscar de Melhor Filme"), sc("cin-2","cinema","\ud83c\udfa5","Realizadores incontornáveis"), sc("cin-3","cinema","\ud83c\udf9e\ufe0f","Clássicos por década"),
+    sc("des-1","desporto","\ud83c\udfc3","Corrida"), sc("des-2","desporto","\ud83e\uddd7","Experiências desportivas"), sc("des-3","desporto","\ud83d\udcc6","Consistência"),
+    sc("car-1","carreira","\ud83d\ude80","Marcos profissionais"), sc("car-2","carreira","\ud83d\udcc8","Desenvolvimento"), sc("car-3","carreira","\ud83d\udca1","Empreendedorismo"),
+    sc("lei-1","leitura","\ud83d\udcd6","Géneros literários"), sc("lei-2","leitura","\ud83d\udd01","Hábito de leitura"), sc("lei-3","leitura","\ud83c\udf93","Novas competências"),
+    sc("hob-1","hobbies","\ud83d\udd8c\ufe0f","Expressão criativa"), sc("hob-2","hobbies","\ud83d\udd28","Projetos manuais"), sc("hob-3","hobbies","\ud83e\udd1d","Partilha")
   ];
-
-  function g(subcategoryId, tag, title) { return { id: subcategoryId + "-" + Math.random().toString(36).slice(2, 8), subcategoryId: subcategoryId, tag: tag || "", title: title, done: false }; }
-
+  function g(subcategoryId, tag, title) { return { id: subcategoryId + "-" + Math.random().toString(36).slice(2, 8), subcategoryIds: [subcategoryId], tag: tag || "", title: title, implies: [], done: false }; }
   var defaultGoals = []
-    .concat([
-      g("pes-1", "", "Ler 12 livros de desenvolvimento pessoal num ano"),
-      g("pes-1", "", "Fazer terapia ou coaching pelo menos uma vez"),
-      g("pes-1", "", "Escrever um diário durante 30 dias seguidos"),
-      g("pes-1", "", "Meditar durante 21 dias seguidos"),
-      g("pes-1", "", "Definir e rever metas anuais")
-    ])
-    .concat([
-      g("pes-2", "", "Acordar antes das 7h durante 30 dias"),
-      g("pes-2", "", "Fazer um detox digital de um fim de semana"),
-      g("pes-2", "", "Manter um orçamento pessoal 3 meses seguidos"),
-      g("pes-2", "", "Eliminar um hábito nocivo durante 60 dias"),
-      g("pes-2", "", "Criar uma rotina matinal fixa")
-    ])
-    .concat([
-      g("pes-3", "", "Falar em público para um grupo grande"),
-      g("pes-3", "", "Enfrentar uma fobia pessoal"),
-      g("pes-3", "", "Pedir um aumento ou negociar salário"),
-      g("pes-3", "", "Terminar algo que sempre adiaste"),
-      g("pes-3", "", "Viajar sozinho/a")
-    ])
-    .concat([
-      g("via-1", "", "Europa"), g("via-1", "", "América do Norte"), g("via-1", "", "América do Sul"),
-      g("via-1", "", "África"), g("via-1", "", "Ásia"), g("via-1", "", "Oceânia")
-    ])
-    .concat([
-      g("via-2", "", "Fazer uma viagem sozinho/a"),
-      g("via-2", "", "Fazer uma viagem de mochila às costas"),
-      g("via-2", "", "Fazer um road trip"),
-      g("via-2", "", "Acampar ao ar livre"),
-      g("via-2", "", "Visitar uma ilha")
-    ])
-    .concat([
-      g("via-3", "", "Coliseu de Roma"), g("via-3", "", "Muralha da China"), g("via-3", "", "Taj Mahal"),
-      g("via-3", "", "Machu Picchu"), g("via-3", "", "Petra"), g("via-3", "", "Cristo Redentor")
-    ])
-    .concat([
-      g("res-1", "", "Comida japonesa"), g("res-1", "", "Comida indiana"), g("res-1", "", "Comida marroquina"),
-      g("res-1", "", "Comida peruana"), g("res-1", "", "Comida tailandesa")
-    ])
-    .concat([
-      g("res-2", "", "Jantar num restaurante com estrela Michelin"),
-      g("res-2", "", "Fazer uma prova de vinhos"),
-      g("res-2", "", "Comer street food num mercado local"),
-      g("res-2", "", "Fazer um curso de culinária")
-    ])
-    .concat([
-      g("res-3", "", "Cozinhar uma receita nova por mês, durante 6 meses"),
-      g("res-3", "", "Fazer pão caseiro do zero"),
-      g("res-3", "", "Organizar um jantar para 8 ou mais pessoas"),
-      g("res-3", "", "Dominar um prato tradicional português")
-    ])
-    .concat([
-      g("cin-1", "2026", "One Battle After Another"), g("cin-1", "2025", "Anora"),
-      g("cin-1", "2024", "Oppenheimer"), g("cin-1", "2023", "Tudo em Todo o Lado ao Mesmo Tempo"),
-      g("cin-1", "2022", "CODA"), g("cin-1", "2021", "Nomadland"), g("cin-1", "2020", "Parasitas"),
-      g("cin-1", "2019", "Green Book — Ao Fundo Havia Liberdade"), g("cin-1", "2018", "A Forma da Água"),
-      g("cin-1", "2017", "Moonlight"), g("cin-1", "2016", "Spotlight — O Caso Silenciado"),
-      g("cin-1", "2015", "Birdman"), g("cin-1", "2014", "12 Anos Escravo"), g("cin-1", "2013", "Argo"),
-      g("cin-1", "2012", "The Artist"), g("cin-1", "2011", "O Discurso do Rei"), g("cin-1", "2010", "Guerra ao Terror"),
-      g("cin-1", "2009", "Slumdog Millionaire"), g("cin-1", "2008", "Este País Não é Para Velhos"),
-      g("cin-1", "2007", "Os Infiltrados"), g("cin-1", "2006", "Crash — Colisão"), g("cin-1", "2005", "Million Dollar Baby"),
-      g("cin-1", "2004", "O Senhor dos Anéis: O Regresso do Rei"), g("cin-1", "2003", "Chicago"),
-      g("cin-1", "2002", "Uma Mente Brilhante"), g("cin-1", "2001", "Gladiador")
-    ])
-    .concat([
-      g("cin-2", "", "Ver um filme de Stanley Kubrick"), g("cin-2", "", "Ver um filme de Martin Scorsese"),
-      g("cin-2", "", "Ver um filme de Hayao Miyazaki"), g("cin-2", "", "Ver um filme de Akira Kurosawa"),
-      g("cin-2", "", "Ver um filme de Christopher Nolan"), g("cin-2", "", "Ver um filme de Quentin Tarantino")
-    ])
-    .concat([
-      g("cin-3", "1950s", "Um clássico dos anos 50"), g("cin-3", "1960s", "Um clássico dos anos 60"),
-      g("cin-3", "1970s", "Um clássico dos anos 70"), g("cin-3", "1980s", "Um clássico dos anos 80"),
-      g("cin-3", "1990s", "Um clássico dos anos 90"), g("cin-3", "2000s", "Um clássico dos anos 2000")
-    ])
-    .concat([
-      g("des-1", "", "Correr 5km sem parar"), g("des-1", "", "Correr 10km"),
-      g("des-1", "", "Completar uma meia-maratona"), g("des-1", "", "Completar uma maratona"),
-      g("des-1", "", "Participar numa corrida noturna")
-    ])
-    .concat([
-      g("des-2", "", "Fazer uma aula de escalada"), g("des-2", "", "Nadar em mar aberto"),
-      g("des-2", "", "Fazer uma rota de BTT"), g("des-2", "", "Fazer uma aula de artes marciais")
-    ])
-    .concat([
-      g("des-3", "", "Treinar 3x por semana durante um mês"),
-      g("des-3", "", "Fazer 30 dias seguidos de alongamentos"),
-      g("des-3", "", "Participar num desafio desportivo em grupo"),
-      g("des-3", "", "Aprender uma nova modalidade desportiva")
-    ])
-    .concat([
-      g("car-1", "", "Primeiro emprego"), g("car-1", "", "Primeira promoção"),
-      g("car-1", "", "Liderar uma equipa"), g("car-1", "", "Mudar de área profissional")
-    ])
-    .concat([
-      g("car-2", "", "Concluir uma certificação profissional"), g("car-2", "", "Falar numa conferência ou evento"),
-      g("car-2", "", "Fazer mentoring a alguém"), g("car-2", "", "Aprender uma nova ferramenta ou tecnologia")
-    ])
-    .concat([
-      g("car-3", "", "Lançar um projeto paralelo (side project)"), g("car-3", "", "Ganhar o primeiro euro fora do salário"),
-      g("car-3", "", "Publicar um artigo ou conteúdo profissional"), g("car-3", "", "Automatizar uma tarefa do teu trabalho")
-    ])
-    .concat([
-      g("lei-1", "", "Ler um romance clássico"), g("lei-1", "", "Ler um livro de ficção científica"),
-      g("lei-1", "", "Ler uma biografia"), g("lei-1", "", "Ler poesia")
-    ])
-    .concat([
-      g("lei-2", "", "Ler 12 livros num ano"), g("lei-2", "", "Participar num clube de leitura"),
-      g("lei-2", "", "Reler um livro favorito"), g("lei-2", "", "Ler um livro no idioma original")
-    ])
-    .concat([
-      g("lei-3", "", "Aprender uma nova língua até nível básico"), g("lei-3", "", "Tirar um curso online"),
-      g("lei-3", "", "Aprender a tocar um instrumento"), g("lei-3", "", "Aprender a programar")
-    ])
-    .concat([
-      g("hob-1", "", "Pintar um quadro"), g("hob-1", "", "Escrever um conto"),
-      g("hob-1", "", "Aprender fotografia"), g("hob-1", "", "Compor uma música")
-    ])
-    .concat([
-      g("hob-2", "", "Construir algo em madeira"), g("hob-2", "", "Fazer um jardim ou horta"),
-      g("hob-2", "", "Reparar algo em casa sozinho/a"), g("hob-2", "", "Criar algo em impressão 3D")
-    ])
-    .concat([
-      g("hob-3", "", "Expor ou partilhar publicamente uma criação"), g("hob-3", "", "Ensinar um hobby a outra pessoa"),
-      g("hob-3", "", "Vender uma criação própria"), g("hob-3", "", "Colaborar com outra pessoa num projeto criativo")
-    ]);
+    .concat([g("pes-1","","Ler 12 livros de desenvolvimento pessoal num ano"),g("pes-1","","Fazer terapia ou coaching pelo menos uma vez"),g("pes-1","","Escrever um diário durante 30 dias seguidos"),g("pes-1","","Meditar durante 21 dias seguidos"),g("pes-1","","Definir e rever metas anuais")])
+    .concat([g("pes-2","","Acordar antes das 7h durante 30 dias"),g("pes-2","","Fazer um detox digital de um fim de semana"),g("pes-2","","Manter um orçamento pessoal 3 meses seguidos"),g("pes-2","","Eliminar um hábito nocivo durante 60 dias"),g("pes-2","","Criar uma rotina matinal fixa")])
+    .concat([g("pes-3","","Falar em público para um grupo grande"),g("pes-3","","Enfrentar uma fobia pessoal"),g("pes-3","","Pedir um aumento ou negociar salário"),g("pes-3","","Terminar algo que sempre adiaste"),g("pes-3","","Viajar sozinho/a")])
+    .concat([g("via-1","","Europa"),g("via-1","","América do Norte"),g("via-1","","América do Sul"),g("via-1","","África"),g("via-1","","Ásia"),g("via-1","","Oceânia")])
+    .concat([g("via-2","","Fazer uma viagem sozinho/a"),g("via-2","","Fazer uma viagem de mochila às costas"),g("via-2","","Fazer um road trip"),g("via-2","","Acampar ao ar livre"),g("via-2","","Visitar uma ilha")])
+    .concat([g("via-3","","Coliseu de Roma"),g("via-3","","Muralha da China"),g("via-3","","Taj Mahal"),g("via-3","","Machu Picchu"),g("via-3","","Petra"),g("via-3","","Cristo Redentor")])
+    .concat([g("res-1","","Comida japonesa"),g("res-1","","Comida indiana"),g("res-1","","Comida marroquina"),g("res-1","","Comida peruana"),g("res-1","","Comida tailandesa")])
+    .concat([g("res-2","","Jantar num restaurante com estrela Michelin"),g("res-2","","Fazer uma prova de vinhos"),g("res-2","","Comer street food num mercado local"),g("res-2","","Fazer um curso de culinária")])
+    .concat([g("res-3","","Cozinhar uma receita nova por mês, durante 6 meses"),g("res-3","","Fazer pão caseiro do zero"),g("res-3","","Organizar um jantar para 8 ou mais pessoas"),g("res-3","","Dominar um prato tradicional português")])
+    .concat([g("cin-1","2026","One Battle After Another"),g("cin-1","2025","Anora"),g("cin-1","2024","Oppenheimer"),g("cin-1","2023","Tudo em Todo o Lado ao Mesmo Tempo"),g("cin-1","2022","CODA"),g("cin-1","2021","Nomadland"),g("cin-1","2020","Parasitas"),g("cin-1","2019","Green Book — Ao Fundo Havia Liberdade"),g("cin-1","2018","A Forma da Água"),g("cin-1","2017","Moonlight"),g("cin-1","2016","Spotlight — O Caso Silenciado"),g("cin-1","2015","Birdman"),g("cin-1","2014","12 Anos Escravo"),g("cin-1","2013","Argo"),g("cin-1","2012","The Artist"),g("cin-1","2011","O Discurso do Rei"),g("cin-1","2010","Guerra ao Terror"),g("cin-1","2009","Slumdog Millionaire"),g("cin-1","2008","Este País Não é Para Velhos"),g("cin-1","2007","Os Infiltrados"),g("cin-1","2006","Crash — Colisão"),g("cin-1","2005","Million Dollar Baby"),g("cin-1","2004","O Senhor dos Anéis: O Regresso do Rei"),g("cin-1","2003","Chicago"),g("cin-1","2002","Uma Mente Brilhante"),g("cin-1","2001","Gladiador")])
+    .concat([g("cin-2","","Ver um filme de Stanley Kubrick"),g("cin-2","","Ver um filme de Martin Scorsese"),g("cin-2","","Ver um filme de Hayao Miyazaki"),g("cin-2","","Ver um filme de Akira Kurosawa"),g("cin-2","","Ver um filme de Christopher Nolan"),g("cin-2","","Ver um filme de Quentin Tarantino")])
+    .concat([g("cin-3","1950s","Um clássico dos anos 50"),g("cin-3","1960s","Um clássico dos anos 60"),g("cin-3","1970s","Um clássico dos anos 70"),g("cin-3","1980s","Um clássico dos anos 80"),g("cin-3","1990s","Um clássico dos anos 90"),g("cin-3","2000s","Um clássico dos anos 2000")])
+    .concat([g("des-1","","Correr 5km sem parar"),g("des-1","","Correr 10km"),g("des-1","","Completar uma meia-maratona"),g("des-1","","Completar uma maratona"),g("des-1","","Participar numa corrida noturna")])
+    .concat([g("des-2","","Fazer uma aula de escalada"),g("des-2","","Nadar em mar aberto"),g("des-2","","Fazer uma rota de BTT"),g("des-2","","Fazer uma aula de artes marciais")])
+    .concat([g("des-3","","Treinar 3x por semana durante um mês"),g("des-3","","Fazer 30 dias seguidos de alongamentos"),g("des-3","","Participar num desafio desportivo em grupo"),g("des-3","","Aprender uma nova modalidade desportiva")])
+    .concat([g("car-1","","Primeiro emprego"),g("car-1","","Primeira promoção"),g("car-1","","Liderar uma equipa"),g("car-1","","Mudar de área profissional")])
+    .concat([g("car-2","","Concluir uma certificação profissional"),g("car-2","","Falar numa conferência ou evento"),g("car-2","","Fazer mentoring a alguém"),g("car-2","","Aprender uma nova ferramenta ou tecnologia")])
+    .concat([g("car-3","","Lançar um projeto paralelo (side project)"),g("car-3","","Ganhar o primeiro euro fora do salário"),g("car-3","","Publicar um artigo ou conteúdo profissional"),g("car-3","","Automatizar uma tarefa do teu trabalho")])
+    .concat([g("lei-1","","Ler um romance clássico"),g("lei-1","","Ler um livro de ficção científica"),g("lei-1","","Ler uma biografia"),g("lei-1","","Ler poesia")])
+    .concat([g("lei-2","","Ler 12 livros num ano"),g("lei-2","","Participar num clube de leitura"),g("lei-2","","Reler um livro favorito"),g("lei-2","","Ler um livro no idioma original")])
+    .concat([g("lei-3","","Aprender uma nova língua até nível básico"),g("lei-3","","Tirar um curso online"),g("lei-3","","Aprender a tocar um instrumento"),g("lei-3","","Aprender a programar")])
+    .concat([g("hob-1","","Pintar um quadro"),g("hob-1","","Escrever um conto"),g("hob-1","","Aprender fotografia"),g("hob-1","","Compor uma música")])
+    .concat([g("hob-2","","Construir algo em madeira"),g("hob-2","","Fazer um jardim ou horta"),g("hob-2","","Reparar algo em casa sozinho/a"),g("hob-2","","Criar algo em impressão 3D")])
+    .concat([g("hob-3","","Expor ou partilhar publicamente uma criação"),g("hob-3","","Ensinar um hobby a outra pessoa"),g("hob-3","","Vender uma criação própria"),g("hob-3","","Colaborar com outra pessoa num projeto criativo")]);
 
-  function load(key, fallback) {
-    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
-    catch (e) { return fallback; }
-  }
+  function load(key, fallback) { try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; } catch (e) { return fallback; } }
   function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
 
   var categories = load(K_CATS, defaultCategories);
@@ -477,9 +318,13 @@
   var theme = load(K_THEME, "light");
   var activeCat = load(K_ACTIVE_CAT, categories[0].id);
 
-  var loggedIn = false;
-  var userId = null;
-  var userEmail = null;
+  var loggedIn = false, userId = null, userEmail = null, isAdmin = false;
+  var explicitDoneIds = new Set();
+  var effectiveMemo = {};
+  var connectingGoal = null;
+  var editingSubcat = null;
+  var editingGoal = null;
+  var selectedExistingGoal = null;
 
   document.documentElement.setAttribute("data-theme", theme);
 
@@ -488,52 +333,69 @@
   var modalMode = "subcat";
 
   var els = {
-    tabAch: document.getElementById("tab-ach"),
-    tabSettings: document.getElementById("tab-settings"),
-    viewAch: document.getElementById("view-ach"),
-    viewSettings: document.getElementById("view-settings"),
-    categoryStrip: document.getElementById("categoryStrip"),
-    subcatsView: document.getElementById("subcatsView"),
-    detailView: document.getElementById("detailView"),
-    catHeading: document.getElementById("catHeading"),
-    subcatGrid: document.getElementById("subcatGrid"),
-    openAddSubcat: document.getElementById("openAddSubcat"),
-    backToSubcats: document.getElementById("backToSubcats"),
-    subcatHeading: document.getElementById("subcatHeading"),
-    openAddGoal: document.getElementById("openAddGoal"),
-    detailFill: document.getElementById("detailFill"),
-    detailLabel: document.getElementById("detailLabel"),
-    goalList: document.getElementById("goalList"),
-    overlay: document.getElementById("overlay"),
-    modalTitle: document.getElementById("modalTitle"),
-    subcatFields: document.getElementById("subcatFields"),
-    goalFields: document.getElementById("goalFields"),
-    fSubcatIcon: document.getElementById("f-subcat-icon"),
-    fSubcatName: document.getElementById("f-subcat-name"),
-    fGoalTag: document.getElementById("f-goal-tag"),
-    fGoalTitle: document.getElementById("f-goal-title"),
-    cancelModal: document.getElementById("cancelModal"),
-    saveModal: document.getElementById("saveModal"),
-    darkSwitch: document.getElementById("darkSwitch"),
-    categoryToggles: document.getElementById("categoryToggles"),
-    authBtn: document.getElementById("authBtn"),
-    configBanner: document.getElementById("configBanner"),
-    accountInfo: document.getElementById("accountInfo"),
-    authOverlay: document.getElementById("authOverlay"),
-    authEmail: document.getElementById("auth-email"),
-    authPassword: document.getElementById("auth-password"),
-    authMsg: document.getElementById("authMsg"),
-    authSignin: document.getElementById("authSignin"),
-    authSignup: document.getElementById("authSignup"),
-    authCancel: document.getElementById("authCancel")
+    tabAch: document.getElementById("tab-ach"), tabSettings: document.getElementById("tab-settings"),
+    viewAch: document.getElementById("view-ach"), viewSettings: document.getElementById("view-settings"),
+    categoryStrip: document.getElementById("categoryStrip"), subcatsView: document.getElementById("subcatsView"),
+    detailView: document.getElementById("detailView"), catHeading: document.getElementById("catHeading"),
+    subcatGrid: document.getElementById("subcatGrid"), openAddSubcat: document.getElementById("openAddSubcat"),
+    backToSubcats: document.getElementById("backToSubcats"), subcatHeading: document.getElementById("subcatHeading"),
+    openAddGoal: document.getElementById("openAddGoal"), detailFill: document.getElementById("detailFill"),
+    detailLabel: document.getElementById("detailLabel"), goalList: document.getElementById("goalList"),
+    overlay: document.getElementById("overlay"), modalTitle: document.getElementById("modalTitle"),
+    subcatFields: document.getElementById("subcatFields"), goalFields: document.getElementById("goalFields"),
+    fSubcatIcon: document.getElementById("f-subcat-icon"), fSubcatName: document.getElementById("f-subcat-name"),
+    fGoalTag: document.getElementById("f-goal-tag"), fGoalTitle: document.getElementById("f-goal-title"),
+    goalAutocomplete: document.getElementById("goalAutocomplete"), goalHint: document.getElementById("goalHint"),
+    cancelModal: document.getElementById("cancelModal"), saveModal: document.getElementById("saveModal"),
+    darkSwitch: document.getElementById("darkSwitch"), categoryToggles: document.getElementById("categoryToggles"),
+    authBtn: document.getElementById("authBtn"), accountInfo: document.getElementById("accountInfo"),
+    authOverlay: document.getElementById("authOverlay"), authEmail: document.getElementById("auth-email"),
+    authPassword: document.getElementById("auth-password"), authMsg: document.getElementById("authMsg"),
+    authSignin: document.getElementById("authSignin"), authSignup: document.getElementById("authSignup"), authCancel: document.getElementById("authCancel"),
+    connectOverlay: document.getElementById("connectOverlay"), connectSelect: document.getElementById("connect-select"),
+    connectFromTitle: document.getElementById("connectFromTitle"), connectSave: document.getElementById("connectSave"), connectCancel: document.getElementById("connectCancel")
   };
-
-  if (!cloudEnabled) els.configBanner.classList.add("show");
 
   function uid(prefix) { return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
   function categoryById(id) { for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i]; return null; }
   function subcatsForCategory(catId) { return subcats.filter(function (s) { return s.categoryId === catId; }); }
-  function goalsForSubcat(subId) { return goals.filter(function (gl) { return gl.subcategoryId === subId; }); }
+  function goalsForSubcat(subId) { return goals.filter(function (gl) { return gl.subcategoryIds && gl.subcategoryIds.indexOf(subId) !== -1; }); }
+  function goalById(id) { for (var i = 0; i < goals.length; i++) if (goals[i].id === id) return goals[i]; return null; }
+  function findGoalByTitle(title) {
+    var lower = title.trim().toLowerCase();
+    for (var i = 0; i < goals.length; i++) if (goals[i].title.trim().toLowerCase() === lower) return goals[i];
+    return null;
+  }
+
+  function isGoalDone(it) { return loggedIn ? !!effectiveMemo[it.id] : !!it.done; }
+  function implierTitle(it) {
+    if (!loggedIn || explicitDoneIds.has(it.id)) return null;
+    for (var i = 0; i < goals.length; i++) {
+      var gl = goals[i];
+      if (gl.id !== it.id && gl.implies && gl.implies.indexOf(it.id) !== -1 && effectiveMemo[gl.id]) return gl.title;
+    }
+    return null;
+  }
+  function recomputeEffective() {
+    var memo = {};
+    function done(id, stack) {
+      if (memo.hasOwnProperty(id)) return memo[id];
+      if (stack.indexOf(id) !== -1) return false;
+      var result = explicitDoneIds.has(id);
+      if (!result) {
+        for (var i = 0; i < goals.length; i++) {
+          var gl = goals[i];
+          if (gl.id !== id && gl.implies && gl.implies.indexOf(id) !== -1) {
+            if (done(gl.id, stack.concat([id]))) { result = true; break; }
+          }
+        }
+      }
+      memo[id] = result;
+      return result;
+    }
+    goals.forEach(function (gl) { done(gl.id, []); });
+    effectiveMemo = memo;
+  }
 
   function switchPrimaryTab(tab) {
     var isAch = tab === "ach";
@@ -551,28 +413,18 @@
     els.authBtn.textContent = loggedIn ? "Sair" : "Entrar";
     els.authBtn.classList.toggle("logged", loggedIn);
     els.accountInfo.innerHTML = loggedIn
-      ? "Sessão iniciada como <strong>" + userEmail + "</strong>. Os dados sincronizam com a tua conta em toda a plataforma."
+      ? "Sessão iniciada como <strong>" + userEmail + "</strong>" + (isAdmin ? " (admin)" : "") + ". As subcategorias e objetivos são partilhados por todos os utilizadores; o teu progresso é só teu."
       : "Não tens sessão iniciada — os dados ficam guardados só neste dispositivo.";
   }
-  function showAuthMsg(text, isInfo) {
-    els.authMsg.textContent = text;
-    els.authMsg.className = "auth-msg" + (isInfo ? " info" : "");
-    els.authMsg.style.display = "";
-  }
-  function openAuthModal() {
-    els.authEmail.value = ""; els.authPassword.value = ""; els.authMsg.style.display = "none";
-    els.authOverlay.classList.add("show"); els.authEmail.focus();
-  }
+  function showAuthMsg(text, isInfo) { els.authMsg.textContent = text; els.authMsg.className = "auth-msg" + (isInfo ? " info" : ""); els.authMsg.style.display = ""; }
+  function openAuthModal() { els.authEmail.value = ""; els.authPassword.value = ""; els.authMsg.style.display = "none"; els.authOverlay.classList.add("show"); els.authEmail.focus(); }
   function closeAuthModal() { els.authOverlay.classList.remove("show"); }
   els.authCancel.addEventListener("click", closeAuthModal);
   els.authOverlay.addEventListener("click", function (e) { if (e.target === els.authOverlay) closeAuthModal(); });
-
   els.authBtn.addEventListener("click", function () {
-    if (!cloudEnabled) { els.configBanner.classList.add("show"); els.configBanner.scrollIntoView({ behavior: "smooth" }); return; }
     if (loggedIn) { sb.auth.signOut().then(function () { location.reload(); }); }
     else { openAuthModal(); }
   });
-
   els.authSignin.addEventListener("click", function () {
     var email = els.authEmail.value.trim(); var pass = els.authPassword.value;
     if (!email || !pass) { showAuthMsg("Preenche o email e a palavra-passe."); return; }
@@ -581,75 +433,68 @@
       closeAuthModal();
     });
   });
-
   els.authSignup.addEventListener("click", function () {
     var email = els.authEmail.value.trim(); var pass = els.authPassword.value;
     if (!email || !pass) { showAuthMsg("Preenche o email e a palavra-passe."); return; }
     if (pass.length < 6) { showAuthMsg("A palavra-passe precisa de pelo menos 6 caracteres."); return; }
     sb.auth.signUp({ email: email, password: pass }).then(function (res) {
       if (res.error) { showAuthMsg(res.error.message); return; }
-      if (res.data && res.data.session) { closeAuthModal(); }
-      else { showAuthMsg("Conta criada. Verifica o teu email para confirmar antes de entrares.", true); }
+      if (res.data && res.data.session) closeAuthModal();
+      else showAuthMsg("Conta criada. Verifica o teu email para confirmar antes de entrares.", true);
     });
   });
 
   function handleAuthState(session) {
     if (session && session.user) {
       loggedIn = true; userId = session.user.id; userEmail = session.user.email;
-      loadCloudData().then(function () {
-        renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView();
-      });
+      loadCloudData().then(function () { renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView(); });
     } else {
-      loggedIn = false; userId = null; userEmail = null;
+      loggedIn = false; userId = null; userEmail = null; isAdmin = false;
       renderAuth();
     }
   }
 
-  /* ---------- Cloud sync via tabela partilhada user_site_data ---------- */
   async function fetchSiteRow(chave) {
     var res = await sb.from("user_site_data").select("valor").eq("site_id", SITE_ID).eq("chave", chave).maybeSingle();
     return res.data ? res.data.valor : null;
   }
   async function saveKey(chave, valor) {
     if (!loggedIn) return;
-    await sb.from("user_site_data").upsert(
-      { user_id: userId, site_id: SITE_ID, chave: chave, valor: valor, updated_at: new Date().toISOString() },
-      { onConflict: "user_id,site_id,chave" }
-    );
+    await sb.from("user_site_data").upsert({ user_id: userId, site_id: SITE_ID, chave: chave, valor: valor, updated_at: new Date().toISOString() }, { onConflict: "user_id,site_id,chave" });
   }
 
   async function loadCloudData() {
-    var remoteSubcats = await fetchSiteRow("subcategorias");
-    if (remoteSubcats === null) {
-      // primeiro login: sobe os dados locais atuais para a conta
-      await saveKey("subcategorias", subcats);
-      await saveKey("objetivos", goals);
-      await saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
-    } else {
-      subcats = remoteSubcats || [];
-      goals = (await fetchSiteRow("objetivos")) || [];
-      var settings = await fetchSiteRow("definicoes");
-      if (settings) {
-        theme = settings.theme || theme;
-        var disabled = settings.disabled_categories || [];
-        categories.forEach(function (c) { c.enabled = disabled.indexOf(c.id) === -1; });
-      }
+    var itemsRes = await sb.from("site_shared_items").select("*").eq("site_id", SITE_ID);
+    var items = itemsRes.data || [];
+    subcats = items.filter(function (r) { return r.kind === "subcategory"; }).map(function (r) { return { id: r.id, categoryId: r.category_id, icon: r.icon, name: r.title }; });
+    goals = items.filter(function (r) { return r.kind === "goal"; }).map(function (r) { return { id: r.id, subcategoryIds: r.subcategory_ids || [], tag: r.tag || "", title: r.title, implies: r.implies || [] }; });
+
+    var completions = await fetchSiteRow("concluidos");
+    explicitDoneIds = new Set(completions || []);
+    recomputeEffective();
+
+    var settings = await fetchSiteRow("definicoes");
+    if (settings) {
+      theme = settings.theme || theme;
+      var disabled = settings.disabled_categories || [];
+      categories.forEach(function (c) { c.enabled = disabled.indexOf(c.id) === -1; });
     }
     document.documentElement.setAttribute("data-theme", theme);
+
+    var profRes = await sb.from("profiles").select("is_admin").eq("id", userId).maybeSingle();
+    isAdmin = !!(profRes.data && profRes.data.is_admin);
   }
 
-  if (cloudEnabled) {
+  if (sb) {
     sb.auth.onAuthStateChange(function (_event, session) { handleAuthState(session); });
     sb.auth.getSession().then(function (res) { handleAuthState(res.data.session); });
   }
 
-  /* ---------- Persist helpers (guest = localStorage, logado = Supabase) ---------- */
-  function persistSubcats() { if (loggedIn) saveKey("subcategorias", subcats); else save(K_SUBCATS, subcats); }
-  function persistGoals() { if (loggedIn) saveKey("objetivos", goals); else save(K_GOALS, goals); }
   function persistSettings() {
     if (loggedIn) saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
     else { save(K_THEME, theme); save(K_CATS, categories); }
   }
+  function persistCompletions() { if (loggedIn) saveKey("concluidos", Array.from(explicitDoneIds)); }
 
   /* ---------- Category strip ---------- */
   function renderCategoryStrip() {
@@ -675,13 +520,8 @@
   }
 
   function renderAchView() {
-    if (achView === "subcats") {
-      els.subcatsView.style.display = ""; els.detailView.style.display = "none";
-      renderSubcats();
-    } else {
-      els.subcatsView.style.display = "none"; els.detailView.style.display = "";
-      renderDetail();
-    }
+    if (achView === "subcats") { els.subcatsView.style.display = ""; els.detailView.style.display = "none"; renderSubcats(); }
+    else { els.subcatsView.style.display = "none"; els.detailView.style.display = ""; renderDetail(); }
   }
 
   function renderSubcats() {
@@ -698,13 +538,31 @@
     }
     list.forEach(function (s) {
       var gl = goalsForSubcat(s.id);
-      var done = gl.filter(function (x) { return x.done; }).length;
+      var done = gl.filter(isGoalDone).length;
       var total = gl.length;
       var pct = total ? Math.round((done / total) * 100) : 0;
 
       var card = document.createElement("div");
       card.className = "subcat-card";
-      card.addEventListener("click", function () { activeSubcat = s.id; achView = "detail"; renderAchView(); });
+      card.addEventListener("click", function (e) { if (e.target.closest(".card-actions")) return; activeSubcat = s.id; achView = "detail"; renderAchView(); });
+
+      var actions = document.createElement("div");
+      actions.className = "card-actions";
+      var editBtn = document.createElement("button");
+      editBtn.className = "icon-btn";
+      editBtn.setAttribute("aria-label", "Editar subcategoria");
+      editBtn.textContent = "\u270e";
+      editBtn.addEventListener("click", function () { openSubcatModal(s); });
+      actions.appendChild(editBtn);
+      if (!loggedIn || isAdmin) {
+        var delBtn = document.createElement("button");
+        delBtn.className = "icon-btn danger";
+        delBtn.setAttribute("aria-label", "Apagar subcategoria");
+        delBtn.textContent = "\u00d7";
+        delBtn.addEventListener("click", function () { deleteSubcat(s); });
+        actions.appendChild(delBtn);
+      }
+      card.appendChild(actions);
 
       var top = document.createElement("div");
       top.className = "top";
@@ -735,7 +593,7 @@
 
     els.subcatHeading.textContent = s.icon + "  " + s.name;
     var gl = goalsForSubcat(s.id);
-    var done = gl.filter(function (x) { return x.done; }).length;
+    var done = gl.filter(isGoalDone).length;
     var total = gl.length;
     var pct = total ? Math.round((done / total) * 100) : 0;
     els.detailFill.style.width = pct + "%";
@@ -750,17 +608,19 @@
       return;
     }
     gl.forEach(function (it) {
+      var effDone = isGoalDone(it);
       var row = document.createElement("div");
-      row.className = "goal-item" + (it.done ? " done" : "");
-      row.addEventListener("click", function (e) { if (e.target.closest(".gdel")) return; toggleGoal(it); });
+      row.className = "goal-item" + (effDone ? " done" : "");
 
       var check = document.createElement("div");
       check.className = "gcheck";
-      check.textContent = it.done ? "\u2713" : "";
+      check.textContent = effDone ? "\u2713" : "";
+      check.addEventListener("click", function () { toggleGoal(it); });
       row.appendChild(check);
 
       var info = document.createElement("div");
       info.className = "ginfo";
+      info.addEventListener("click", function () { toggleGoal(it); });
       if (it.tag) {
         var tag = document.createElement("span");
         tag.className = "gtag";
@@ -771,14 +631,62 @@
       t.className = "gtitle";
       t.textContent = it.title;
       info.appendChild(t);
+
+      var implier = implierTitle(it);
+      if (implier) {
+        var note = document.createElement("div");
+        note.className = "gimplied";
+        note.textContent = "Concluído automaticamente via \"" + implier + "\"";
+        info.appendChild(note);
+      }
+
+      if (loggedIn && it.implies && it.implies.length) {
+        var links = document.createElement("div");
+        links.className = "glinks";
+        it.implies.forEach(function (targetId) {
+          var target = goalById(targetId);
+          if (!target) return;
+          var chip = document.createElement("span");
+          chip.className = "chip";
+          chip.appendChild(document.createTextNode("\u2192 " + target.title));
+          var xBtn = document.createElement("button");
+          xBtn.textContent = "\u00d7";
+          xBtn.addEventListener("click", function (e) { e.stopPropagation(); removeImplication(it, targetId); });
+          chip.appendChild(xBtn);
+          links.appendChild(chip);
+        });
+        info.appendChild(links);
+      }
+
       row.appendChild(info);
 
-      var del = document.createElement("button");
-      del.className = "gdel";
-      del.setAttribute("aria-label", "Remover objetivo");
-      del.textContent = "\u00d7";
-      del.addEventListener("click", function () { deleteGoal(it); });
-      row.appendChild(del);
+      var actions = document.createElement("div");
+      actions.className = "goal-actions";
+
+      if (loggedIn) {
+        var linkBtn = document.createElement("button");
+        linkBtn.className = "link-action";
+        linkBtn.textContent = "\ud83d\udd17 Ligar";
+        linkBtn.addEventListener("click", function (e) { e.stopPropagation(); openConnectModal(it); });
+        actions.appendChild(linkBtn);
+      }
+
+      var editBtn = document.createElement("button");
+      editBtn.className = "icon-btn";
+      editBtn.setAttribute("aria-label", "Editar objetivo");
+      editBtn.textContent = "\u270e";
+      editBtn.addEventListener("click", function (e) { e.stopPropagation(); openGoalModal(it); });
+      actions.appendChild(editBtn);
+
+      if (!loggedIn || isAdmin) {
+        var del = document.createElement("button");
+        del.className = "icon-btn danger";
+        del.setAttribute("aria-label", "Remover objetivo");
+        del.textContent = "\u00d7";
+        del.addEventListener("click", function (e) { e.stopPropagation(); deleteGoal(it); });
+        actions.appendChild(del);
+      }
+      row.appendChild(actions);
 
       els.goalList.appendChild(row);
     });
@@ -786,57 +694,174 @@
 
   els.backToSubcats.addEventListener("click", function () { achView = "subcats"; renderAchView(); });
 
+  /* ---------- Connect modal ---------- */
+  function openConnectModal(it) {
+    connectingGoal = it;
+    els.connectFromTitle.textContent = it.title;
+    els.connectSelect.innerHTML = "";
+    var bySubcat = {};
+    goals.forEach(function (gl) {
+      if (gl.id === it.id) return;
+      if (it.implies && it.implies.indexOf(gl.id) !== -1) return;
+      var subNames = (gl.subcategoryIds || []).map(function (sid) {
+        var sub = null;
+        for (var i = 0; i < subcats.length; i++) if (subcats[i].id === sid) sub = subcats[i];
+        return sub ? sub.name : null;
+      }).filter(Boolean);
+      var groupName = subNames.length ? subNames[0] : "Outras";
+      if (!bySubcat[groupName]) bySubcat[groupName] = [];
+      bySubcat[groupName].push(gl);
+    });
+    Object.keys(bySubcat).sort().forEach(function (groupName) {
+      var group = document.createElement("optgroup");
+      group.label = groupName;
+      bySubcat[groupName].forEach(function (gl) {
+        var opt = document.createElement("option");
+        opt.value = gl.id;
+        opt.textContent = gl.title;
+        group.appendChild(opt);
+      });
+      els.connectSelect.appendChild(group);
+    });
+    els.connectOverlay.classList.add("show");
+  }
+  function closeConnectModal() { els.connectOverlay.classList.remove("show"); connectingGoal = null; }
+  els.connectCancel.addEventListener("click", closeConnectModal);
+  els.connectOverlay.addEventListener("click", function (e) { if (e.target === els.connectOverlay) closeConnectModal(); });
+  els.connectSave.addEventListener("click", function () {
+    var targetId = els.connectSelect.value;
+    if (!targetId || !connectingGoal) { closeConnectModal(); return; }
+    connectingGoal.implies = connectingGoal.implies || [];
+    if (connectingGoal.implies.indexOf(targetId) === -1) connectingGoal.implies.push(targetId);
+    persistImplies(connectingGoal);
+    recomputeEffective();
+    closeConnectModal();
+    renderDetail(); renderSubcats();
+  });
+  function removeImplication(it, targetId) {
+    it.implies = (it.implies || []).filter(function (x) { return x !== targetId; });
+    persistImplies(it);
+    recomputeEffective();
+    renderDetail(); renderSubcats();
+  }
+  function persistImplies(it) {
+    if (loggedIn) sb.from("site_shared_items").update({ implies: it.implies }).eq("id", it.id).then(function () {});
+    else save(K_GOALS, goals);
+  }
+
   /* ---------- Data mutations ---------- */
   function addSubcat(name, icon) {
-    subcats.push({ id: uid("sc"), categoryId: activeCat, icon: icon, name: name });
-    persistSubcats();
+    if (loggedIn) {
+      sb.from("site_shared_items").insert({ site_id: SITE_ID, kind: "subcategory", category_id: activeCat, icon: icon, title: name, created_by: userId })
+        .select().single().then(function (res) {
+          if (res.data) subcats.push({ id: res.data.id, categoryId: res.data.category_id, icon: res.data.icon, name: res.data.title });
+          renderSubcats();
+        });
+    } else {
+      subcats.push({ id: uid("sc"), categoryId: activeCat, icon: icon, name: name });
+      save(K_SUBCATS, subcats);
+      renderSubcats();
+    }
+  }
+  function updateSubcat(s, name, icon) {
+    s.name = name; s.icon = icon;
+    if (loggedIn) sb.from("site_shared_items").update({ title: name, icon: icon }).eq("id", s.id).then(function () {});
+    else save(K_SUBCATS, subcats);
     renderSubcats();
   }
   function addGoal(subcategoryId, tag, title) {
-    goals.push({ id: uid("g"), subcategoryId: subcategoryId, tag: tag, title: title, done: false });
-    persistGoals();
+    if (loggedIn) {
+      sb.from("site_shared_items").insert({ site_id: SITE_ID, kind: "goal", subcategory_ids: [subcategoryId], tag: tag, title: title, created_by: userId })
+        .select().single().then(function (res) {
+          if (res.data) goals.push({ id: res.data.id, subcategoryIds: res.data.subcategory_ids || [], tag: res.data.tag || "", title: res.data.title, implies: res.data.implies || [] });
+          recomputeEffective();
+          renderDetail(); renderSubcats();
+        }, function (err) {
+          alert("Não foi possível criar: talvez já exista um objetivo com esse título.");
+        });
+    } else {
+      goals.push({ id: uid("g"), subcategoryIds: [subcategoryId], tag: tag, title: title, implies: [], done: false });
+      save(K_GOALS, goals);
+      renderDetail(); renderSubcats();
+    }
+  }
+  function attachGoalToSubcat(existing, subcategoryId) {
+    if (existing.subcategoryIds.indexOf(subcategoryId) !== -1) return;
+    existing.subcategoryIds.push(subcategoryId);
+    if (loggedIn) sb.from("site_shared_items").update({ subcategory_ids: existing.subcategoryIds }).eq("id", existing.id).then(function () {});
+    else save(K_GOALS, goals);
+    renderDetail(); renderSubcats();
+  }
+  function updateGoal(it, tag, title) {
+    it.tag = tag; it.title = title;
+    if (loggedIn) sb.from("site_shared_items").update({ tag: tag, title: title }).eq("id", it.id).then(function () {});
+    else save(K_GOALS, goals);
     renderDetail(); renderSubcats();
   }
   function toggleGoal(it) {
-    it.done = !it.done;
-    persistGoals();
+    if (loggedIn) {
+      if (explicitDoneIds.has(it.id)) explicitDoneIds.delete(it.id); else explicitDoneIds.add(it.id);
+      persistCompletions();
+      recomputeEffective();
+    } else {
+      it.done = !it.done;
+      save(K_GOALS, goals);
+    }
     renderDetail(); renderSubcats();
   }
   function deleteGoal(it) {
+    if (!window.confirm('Tens a certeza que queres apagar o objetivo "' + it.title + '"? Esta ação não pode ser desfeita.')) return;
+    if (loggedIn) {
+      if (!isAdmin) return;
+      sb.from("site_shared_items").delete().eq("id", it.id).then(function () {});
+    }
     goals = goals.filter(function (x) { return x.id !== it.id; });
-    persistGoals();
+    goals.forEach(function (gl) { if (gl.implies) gl.implies = gl.implies.filter(function (t) { return t !== it.id; }); });
+    if (!loggedIn) save(K_GOALS, goals);
+    recomputeEffective();
     renderDetail(); renderSubcats();
   }
-  function setCategoryEnabled(cat, val) {
-    cat.enabled = val;
-    persistSettings();
-    renderCategoryStrip();
-    renderAchView();
-  }
-  function setTheme(t) {
-    theme = t;
-    document.documentElement.setAttribute("data-theme", theme);
-    persistSettings();
-  }
-
-  /* ---------- Modal (subcategory / goal) ---------- */
-  function openModal(mode) {
-    modalMode = mode;
-    if (mode === "subcat") {
-      els.modalTitle.textContent = "Nova subcategoria";
-      els.subcatFields.style.display = ""; els.goalFields.style.display = "none";
-      els.fSubcatIcon.value = ""; els.fSubcatName.value = "";
-      els.overlay.classList.add("show"); els.fSubcatName.focus();
-    } else {
-      els.modalTitle.textContent = "Novo objetivo";
-      els.subcatFields.style.display = "none"; els.goalFields.style.display = "";
-      els.fGoalTag.value = ""; els.fGoalTitle.value = "";
-      els.overlay.classList.add("show"); els.fGoalTitle.focus();
+  function deleteSubcat(s) {
+    if (!window.confirm('Tens a certeza que queres apagar a subcategoria "' + s.name + '" e todos os seus objetivos? Esta ação não pode ser desfeita.')) return;
+    if (loggedIn) {
+      if (!isAdmin) return;
+      sb.from("site_shared_items").delete().eq("id", s.id).then(function () {});
     }
+    subcats = subcats.filter(function (x) { return x.id !== s.id; });
+    goals.forEach(function (gl) { gl.subcategoryIds = (gl.subcategoryIds || []).filter(function (id) { return id !== s.id; }); });
+    goals = goals.filter(function (gl) { return gl.subcategoryIds.length > 0; });
+    if (!loggedIn) { save(K_SUBCATS, subcats); save(K_GOALS, goals); }
+    recomputeEffective();
+    renderSubcats();
   }
-  function closeModal() { els.overlay.classList.remove("show"); }
-  els.openAddSubcat.addEventListener("click", function () { openModal("subcat"); });
-  els.openAddGoal.addEventListener("click", function () { openModal("goal"); });
+  function setCategoryEnabled(cat, val) { cat.enabled = val; persistSettings(); renderCategoryStrip(); renderAchView(); }
+  function setTheme(t) { theme = t; document.documentElement.setAttribute("data-theme", theme); persistSettings(); }
+
+  /* ---------- Modal (create/edit subcategory / goal) ---------- */
+  function openSubcatModal(existing) {
+    modalMode = "subcat";
+    editingSubcat = existing || null;
+    els.modalTitle.textContent = existing ? "Editar subcategoria" : "Nova subcategoria";
+    els.subcatFields.style.display = ""; els.goalFields.style.display = "none";
+    els.fSubcatIcon.value = existing ? existing.icon : "";
+    els.fSubcatName.value = existing ? existing.name : "";
+    els.overlay.classList.add("show"); els.fSubcatName.focus();
+  }
+  function openGoalModal(existing) {
+    modalMode = "goal";
+    editingGoal = existing || null;
+    selectedExistingGoal = null;
+    els.modalTitle.textContent = existing ? "Editar objetivo" : "Novo objetivo";
+    els.subcatFields.style.display = "none"; els.goalFields.style.display = "";
+    els.fGoalTag.value = existing ? existing.tag : "";
+    els.fGoalTitle.value = existing ? existing.title : "";
+    els.goalHint.textContent = existing ? "" : "Se já existir um objetivo com este título, é associado a esta subcategoria em vez de duplicado.";
+    hideAutocomplete();
+    els.overlay.classList.add("show"); els.fGoalTitle.focus();
+  }
+  function closeModal() { els.overlay.classList.remove("show"); hideAutocomplete(); }
+  els.openAddSubcat.addEventListener("click", function () { openSubcatModal(null); });
+  els.openAddGoal.addEventListener("click", function () { openGoalModal(null); });
   els.cancelModal.addEventListener("click", closeModal);
   els.overlay.addEventListener("click", function (e) { if (e.target === els.overlay) closeModal(); });
 
@@ -845,15 +870,54 @@
       var name = els.fSubcatName.value.trim();
       if (!name) { els.fSubcatName.focus(); return; }
       var icon = els.fSubcatIcon.value.trim() || "\ud83c\udff5\ufe0f";
-      addSubcat(name, icon);
+      if (editingSubcat) updateSubcat(editingSubcat, name, icon);
+      else addSubcat(name, icon);
       closeModal();
     } else {
       var title = els.fGoalTitle.value.trim();
       if (!title) { els.fGoalTitle.focus(); return; }
-      addGoal(activeSubcat, els.fGoalTag.value.trim(), title);
+      var tag = els.fGoalTag.value.trim();
+      if (editingGoal) {
+        updateGoal(editingGoal, tag, title);
+      } else {
+        var existing = selectedExistingGoal && selectedExistingGoal.title.toLowerCase() === title.toLowerCase() ? selectedExistingGoal : findGoalByTitle(title);
+        if (existing) attachGoalToSubcat(existing, activeSubcat);
+        else addGoal(activeSubcat, tag, title);
+      }
       closeModal();
     }
   });
+
+  /* ---------- Autocomplete for goal title ---------- */
+  function hideAutocomplete() { els.goalAutocomplete.classList.remove("show"); els.goalAutocomplete.innerHTML = ""; }
+  els.fGoalTitle.addEventListener("input", function () {
+    selectedExistingGoal = null;
+    var q = els.fGoalTitle.value.trim().toLowerCase();
+    if (!q || editingGoal) { hideAutocomplete(); return; }
+    var matches = goals.filter(function (gl) {
+      return gl.title.toLowerCase().indexOf(q) !== -1 && gl.subcategoryIds.indexOf(activeSubcat) === -1;
+    }).slice(0, 8);
+    if (matches.length === 0) { hideAutocomplete(); return; }
+    els.goalAutocomplete.innerHTML = "";
+    matches.forEach(function (gl) {
+      var item = document.createElement("div");
+      item.className = "autocomplete-item";
+      var subNames = (gl.subcategoryIds || []).map(function (sid) {
+        var sub = null;
+        for (var i = 0; i < subcats.length; i++) if (subcats[i].id === sid) sub = subcats[i];
+        return sub ? sub.name : null;
+      }).filter(Boolean).join(", ");
+      item.innerHTML = gl.title + (subNames ? '<span class="ac-sub">já em: ' + subNames + '</span>' : "");
+      item.addEventListener("click", function () {
+        els.fGoalTitle.value = gl.title;
+        selectedExistingGoal = gl;
+        hideAutocomplete();
+      });
+      els.goalAutocomplete.appendChild(item);
+    });
+    els.goalAutocomplete.classList.add("show");
+  });
+  els.fGoalTitle.addEventListener("blur", function () { setTimeout(hideAutocomplete, 150); });
 
   /* ---------- Settings ---------- */
   function renderSettings() {
@@ -892,6 +956,6 @@
 })();
 </script>
 
-<!-- v0.4 -->
+<!-- v0.6 -->
 </body>
 </html>
