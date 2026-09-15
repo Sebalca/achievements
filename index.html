@@ -58,7 +58,7 @@
   .subcat-card .ico { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
   .subcat-card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.02rem; margin: 0; }
   .card-actions { position: absolute; top: 10px; right: 10px; display: flex; gap: 4px; }
-  .icon-btn { background: none; border: none; color: var(--ink-soft); font-size: 0.92rem; cursor: pointer; opacity: 0.6; padding: 2px 4px; }
+  .icon-btn { background: none; border: none; color: var(--ink-soft); font-size: 0.9rem; cursor: pointer; opacity: 0.6; padding: 2px 4px; }
   .icon-btn:hover { opacity: 1; }
   .icon-btn.danger:hover { color: var(--rust); }
   .bar { height: 7px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
@@ -68,27 +68,28 @@
   .empty { border: 1px dashed var(--line); border-radius: 10px; padding: 34px 20px; text-align: center; color: var(--ink-soft); grid-column: 1 / -1; }
   .empty p { margin: 0 0 14px; font-size: 0.92rem; }
 
-  .detail-progress { margin-bottom: 18px; }
+  .detail-progress { margin-bottom: 16px; }
   .detail-progress .bar { height: 8px; margin-bottom: 6px; }
   .detail-progress .label { font-size: 0.8rem; color: var(--ink-soft); text-align: center; }
-  .goal-list { display: flex; flex-direction: column; gap: 8px; }
-  .goal-item { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 11px 12px; user-select: none; }
+  .goal-list { display: flex; flex-direction: column; gap: 6px; }
+  .goal-item { display: flex; align-items: flex-start; gap: 9px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 7px 9px; user-select: none; }
   .goal-item.done { background: var(--gold-soft); border-color: var(--gold); }
-  .goal-item .gcheck { flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: var(--gold); cursor: pointer; margin-top: 1px; }
+  .goal-item .gcheck { flex: 0 0 19px; width: 19px; height: 19px; border-radius: 50%; border: 2px solid var(--gold); display: flex; align-items: center; justify-content: center; font-size: 0.68rem; color: var(--gold); cursor: pointer; margin-top: 1px; }
   .goal-item.done .gcheck { background: var(--gold); color: var(--surface); }
   .goal-item .ginfo { flex: 1; min-width: 0; cursor: pointer; }
-  .goal-item .gtag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.05em; color: var(--gold); text-transform: uppercase; display: block; }
-  .goal-item .gtitle { font-size: 0.94rem; }
+  .goal-item .gtag { font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.05em; color: var(--gold); text-transform: uppercase; display: block; }
+  .goal-item .gtitle { font-size: 0.82rem; line-height: 1.3; }
   .goal-item.done .gtitle { color: var(--ink-soft); text-decoration: line-through; }
-  .goal-item .gimplied { font-size: 0.72rem; color: var(--ink-soft); margin-top: 3px; font-style: italic; }
-  .goal-item .glinks { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-  .chip { display: inline-flex; align-items: center; gap: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 3px 9px 3px 10px; font-size: 0.72rem; color: var(--ink-soft); }
-  .chip button { background: none; border: none; color: var(--ink-soft); cursor: pointer; font-size: 0.85rem; padding: 0; line-height: 1; }
+  .goal-item .gnotes { font-size: 0.72rem; color: var(--ink-soft); margin-top: 2px; }
+  .goal-item .gimplied { font-size: 0.66rem; color: var(--ink-soft); margin-top: 2px; font-style: italic; }
+  .goal-item .glinks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+  .chip { display: inline-flex; align-items: center; gap: 3px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 2px 7px 2px 8px; font-size: 0.64rem; color: var(--ink-soft); }
+  .chip button { background: none; border: none; color: var(--ink-soft); cursor: pointer; font-size: 0.78rem; padding: 0; line-height: 1; }
   .chip button:hover { color: var(--rust); }
-  .goal-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; flex-shrink: 0; }
-  .goal-actions .icon-btn { opacity: 0.7; }
-  .link-action { display: flex; align-items: center; gap: 4px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; font-size: 0.74rem; color: var(--ink-soft); cursor: pointer; white-space: nowrap; }
-  .link-action:hover { border-color: var(--gold); color: var(--ink); }
+  .goal-side { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .gdate { font-family: var(--font-mono); font-size: 0.62rem; letter-spacing: 0.03em; color: var(--ink-soft); white-space: nowrap; }
+  .goal-actions { display: flex; gap: 2px; }
+  .goal-actions .icon-btn { opacity: 0.65; font-size: 0.82rem; }
 
   .settings-section { margin-bottom: 28px; }
   .settings-section h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; margin: 14px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
@@ -104,22 +105,27 @@
   .account-info { font-size: 0.86rem; color: var(--ink-soft); }
   .account-info strong { color: var(--ink); }
 
+  .map-wrap { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+  .map-wrap svg { width: 100%; height: auto; display: block; }
+  .map-caption { text-align: center; color: var(--ink-soft); font-size: 0.82rem; margin-top: 10px; }
+
   .overlay { position: fixed; inset: 0; background: rgba(16,22,14,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 50; }
   .overlay.show { display: flex; }
   @media (min-width: 560px) { .overlay { align-items: center; } }
-  .modal { background: var(--surface); width: 100%; max-width: 440px; border-radius: 14px 14px 0 0; padding: 20px 20px 24px; max-height: 88vh; overflow-y: auto; }
+  .modal { background: var(--surface); width: 100%; max-width: 460px; border-radius: 14px 14px 0 0; padding: 20px 20px 24px; max-height: 88vh; overflow-y: auto; }
   @media (min-width: 560px) { .modal { border-radius: 14px; } }
   .modal h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 16px; }
   .field { margin-bottom: 14px; position: relative; }
   .field label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 5px; }
-  .field input[type=text], .field input[type=email], .field input[type=password], .field select {
+  .field input[type=text], .field input[type=email], .field input[type=password], .field select, .field textarea {
     width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
     padding: 10px 11px; color: var(--ink); font-size: 0.92rem; font-family: inherit;
   }
+  .field textarea { resize: vertical; min-height: 56px; }
   .autocomplete-list {
     position: absolute; left: 0; right: 0; top: 100%; z-index: 5; margin-top: 4px;
     background: var(--surface); border: 1px solid var(--line); border-radius: 8px;
-    max-height: 180px; overflow-y: auto; display: none; box-shadow: 0 4px 12px var(--shadow);
+    max-height: 160px; overflow-y: auto; display: none; box-shadow: 0 4px 12px var(--shadow);
   }
   .autocomplete-list.show { display: block; }
   .autocomplete-item { padding: 8px 11px; font-size: 0.88rem; cursor: pointer; }
@@ -133,6 +139,11 @@
   .btn.secondary { background: var(--surface-2); color: var(--ink); }
   .auth-msg { font-size: 0.82rem; padding: 8px 0; color: var(--rust); }
   .auth-msg.info { color: var(--ink-soft); }
+  .onboarding-list { display: flex; flex-direction: column; gap: 2px; margin-bottom: 6px; }
+  .links-section { border-top: 1px solid var(--line); margin-top: 6px; padding-top: 14px; }
+  .links-section h3 { font-family: var(--font-display); font-weight: 400; font-size: 0.98rem; margin: 0 0 10px; }
+  .links-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .links-chips .chip { font-size: 0.74rem; padding: 4px 9px 4px 10px; }
 
   :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 </style>
@@ -147,6 +158,7 @@
   <div class="nav-row">
     <div class="primary-tabs">
       <button id="tab-ach" class="active">Achievements</button>
+      <button id="tab-map">Mapa Interativo</button>
       <button id="tab-settings">Definições</button>
     </div>
     <div class="auth-divider"></div>
@@ -178,6 +190,29 @@
     </div>
   </section>
 
+  <section id="view-map" style="display:none">
+    <div class="map-wrap">
+      <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="ocean-dots" width="18" height="18" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="1" fill="var(--line)"></circle>
+          </pattern>
+        </defs>
+        <rect x="0" y="0" width="1000" height="500" fill="url(#ocean-dots)"></rect>
+        <rect x="0" y="0" width="1000" height="500" fill="none" stroke="var(--line)" stroke-width="2"></rect>
+        <g fill="var(--surface-2)" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round">
+          <path d="M70,60 C130,40 210,50 250,90 C280,120 260,150 230,150 C250,170 240,200 210,210 C180,220 150,200 140,180 C110,190 80,170 75,140 C50,120 45,85 70,60 Z"></path>
+          <path d="M175,225 C210,215 240,235 245,270 C250,310 260,340 240,380 C225,410 195,415 180,395 C160,405 150,375 155,345 C140,320 145,285 160,260 C155,245 160,230 175,225 Z"></path>
+          <path d="M445,70 C480,55 520,65 530,90 C545,85 555,105 540,120 C555,135 540,155 515,150 C500,165 470,160 460,140 C440,145 425,120 435,100 C425,90 430,75 445,70 Z"></path>
+          <path d="M450,175 C490,165 530,180 545,215 C560,245 555,285 540,320 C530,350 535,385 510,400 C485,415 460,395 455,370 C430,360 425,325 435,295 C415,270 420,235 440,210 C430,195 435,180 450,175 Z"></path>
+          <path d="M580,55 C650,35 730,45 790,60 C850,50 900,70 890,105 C910,120 895,150 860,150 C870,175 840,195 810,185 C795,210 760,215 740,195 C700,210 660,195 645,165 C610,170 585,145 590,115 C570,105 565,75 580,55 Z"></path>
+          <path d="M790,335 C825,325 865,335 875,360 C885,385 865,405 835,400 C820,415 795,405 790,385 C770,375 775,350 790,335 Z"></path>
+        </g>
+      </svg>
+    </div>
+    <div class="map-caption">Mapa do mundo — em breve com destaque para os países e continentes já conquistados.</div>
+  </section>
+
   <section id="view-settings" style="display:none">
     <div class="settings-section">
       <h2>Conta</h2>
@@ -190,6 +225,14 @@
     <div class="settings-section">
       <h2>Categorias visíveis</h2>
       <div id="categoryToggles"></div>
+    </div>
+    <div class="settings-section">
+      <h2>Sugestões</h2>
+      <div class="field"><label for="f-sugg-msg">A tua sugestão ou reporte de bug</label><textarea id="f-sugg-msg" placeholder="Escreve aqui..."></textarea></div>
+      <div class="field"><label for="f-sugg-name">Nome (opcional)</label><input type="text" id="f-sugg-name"></div>
+      <div class="field"><label for="f-sugg-email">Email (opcional)</label><input type="text" id="f-sugg-email"></div>
+      <button class="add-btn" id="sendSuggestion" style="width:100%">Enviar sugestão</button>
+      <div class="field-hint" id="suggMsg" style="margin-top:8px"></div>
     </div>
   </section>
 </main>
@@ -209,6 +252,21 @@
         <div class="autocomplete-list" id="goalAutocomplete"></div>
         <div class="field-hint" id="goalHint"></div>
       </div>
+      <div class="field"><label for="f-goal-notas">Notas (opcional)</label><textarea id="f-goal-notas" placeholder="Detalhes ou contexto sobre este objetivo"></textarea></div>
+
+      <div class="links-section" id="linksSection" style="display:none">
+        <h3>Ligações</h3>
+        <p style="font-size:0.78rem;color:var(--ink-soft);margin-top:-4px">Quando este objetivo for feito, marca também automaticamente (só nesse sentido):</p>
+        <div class="links-chips" id="linksChips"></div>
+        <div class="field"><label for="link-cat">Categoria</label><select id="link-cat"></select></div>
+        <div class="field"><label for="link-subcat">Subcategoria</label><select id="link-subcat"></select></div>
+        <div class="field">
+          <label for="link-search">Objetivo</label>
+          <input type="text" id="link-search" placeholder="Escreve para procurar..." autocomplete="off">
+          <div class="autocomplete-list" id="linkAutocomplete"></div>
+        </div>
+        <button class="btn secondary" type="button" id="linkAdd" style="width:100%">+ Adicionar ligação</button>
+      </div>
     </div>
     <div class="modal-actions">
       <button class="btn secondary" id="cancelModal">Cancelar</button>
@@ -217,17 +275,13 @@
   </div>
 </div>
 
-<div class="overlay" id="connectOverlay">
+<div class="overlay" id="onboardingOverlay">
   <div class="modal">
-    <h2>Ligar a outro objetivo</h2>
-    <p style="font-size:0.84rem;color:var(--ink-soft);margin-top:-8px">Se marcares "<span id="connectFromTitle"></span>" como feito, o objetivo escolhido conta automaticamente como feito também (só nesse sentido).</p>
-    <div class="field">
-      <label for="connect-select">Objetivo a marcar automaticamente</label>
-      <select id="connect-select"></select>
-    </div>
+    <h2>Bem-vindo! Escolhe as tuas categorias</h2>
+    <p style="font-size:0.84rem;color:var(--ink-soft);margin-top:-8px">Podes mudar isto mais tarde em Definições.</p>
+    <div class="onboarding-list" id="onboardingList"></div>
     <div class="modal-actions">
-      <button class="btn secondary" id="connectCancel">Cancelar</button>
-      <button class="btn primary" id="connectSave">Ligar</button>
+      <button class="btn primary" id="onboardingSave" style="flex:1">Guardar e continuar</button>
     </div>
   </div>
 </div>
@@ -255,11 +309,21 @@
   var SITE_ID = "achievements";
   var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
+  // Cola aqui o URL /exec da tua Google Apps Script Web App de sugestões (o mesmo do outro projeto, depois de adicionares a coluna "Site")
+  var SUGGESTIONS_WEBHOOK_URL = "COLOCA_AQUI_O_URL_DO_APPS_SCRIPT";
+
   var K_CATS = "ach_categories_v2";
   var K_SUBCATS = "ach_subcats_v2";
-  var K_GOALS = "ach_goals_v3";
+  var K_GOALS = "ach_goals_v4";
   var K_THEME = "ach_theme_v1";
   var K_ACTIVE_CAT = "ach_active_cat_v2";
+
+  var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
+  function formatDate(iso) {
+    if (!iso) return "";
+    var d = new Date(iso);
+    return d.getDate() + " " + MONTHS[d.getMonth()] + " " + d.getFullYear();
+  }
 
   var defaultCategories = [
     { id: "pessoal",     name: "Pessoal",               icon: "\ud83e\udded", enabled: true },
@@ -282,7 +346,7 @@
     sc("lei-1","leitura","\ud83d\udcd6","Géneros literários"), sc("lei-2","leitura","\ud83d\udd01","Hábito de leitura"), sc("lei-3","leitura","\ud83c\udf93","Novas competências"),
     sc("hob-1","hobbies","\ud83d\udd8c\ufe0f","Expressão criativa"), sc("hob-2","hobbies","\ud83d\udd28","Projetos manuais"), sc("hob-3","hobbies","\ud83e\udd1d","Partilha")
   ];
-  function g(subcategoryId, tag, title) { return { id: subcategoryId + "-" + Math.random().toString(36).slice(2, 8), subcategoryIds: [subcategoryId], tag: tag || "", title: title, implies: [], done: false }; }
+  function g(subcategoryId, tag, title) { return { id: subcategoryId + "-" + Math.random().toString(36).slice(2, 8), subcategoryIds: [subcategoryId], tag: tag || "", title: title, notas: "", implies: [], done: false, doneAt: null }; }
   var defaultGoals = []
     .concat([g("pes-1","","Ler 12 livros de desenvolvimento pessoal num ano"),g("pes-1","","Fazer terapia ou coaching pelo menos uma vez"),g("pes-1","","Escrever um diário durante 30 dias seguidos"),g("pes-1","","Meditar durante 21 dias seguidos"),g("pes-1","","Definir e rever metas anuais")])
     .concat([g("pes-2","","Acordar antes das 7h durante 30 dias"),g("pes-2","","Fazer um detox digital de um fim de semana"),g("pes-2","","Manter um orçamento pessoal 3 meses seguidos"),g("pes-2","","Eliminar um hábito nocivo durante 60 dias"),g("pes-2","","Criar uma rotina matinal fixa")])
@@ -319,12 +383,13 @@
   var activeCat = load(K_ACTIVE_CAT, categories[0].id);
 
   var loggedIn = false, userId = null, userEmail = null, isAdmin = false;
-  var explicitDoneIds = new Set();
+  var explicitDoneMap = {};
   var effectiveMemo = {};
-  var connectingGoal = null;
+  var effectiveDateMemo = {};
   var editingSubcat = null;
   var editingGoal = null;
   var selectedExistingGoal = null;
+  var linkSelectedGoal = null;
 
   document.documentElement.setAttribute("data-theme", theme);
 
@@ -333,8 +398,8 @@
   var modalMode = "subcat";
 
   var els = {
-    tabAch: document.getElementById("tab-ach"), tabSettings: document.getElementById("tab-settings"),
-    viewAch: document.getElementById("view-ach"), viewSettings: document.getElementById("view-settings"),
+    tabAch: document.getElementById("tab-ach"), tabMap: document.getElementById("tab-map"), tabSettings: document.getElementById("tab-settings"),
+    viewAch: document.getElementById("view-ach"), viewMap: document.getElementById("view-map"), viewSettings: document.getElementById("view-settings"),
     categoryStrip: document.getElementById("categoryStrip"), subcatsView: document.getElementById("subcatsView"),
     detailView: document.getElementById("detailView"), catHeading: document.getElementById("catHeading"),
     subcatGrid: document.getElementById("subcatGrid"), openAddSubcat: document.getElementById("openAddSubcat"),
@@ -344,16 +409,20 @@
     overlay: document.getElementById("overlay"), modalTitle: document.getElementById("modalTitle"),
     subcatFields: document.getElementById("subcatFields"), goalFields: document.getElementById("goalFields"),
     fSubcatIcon: document.getElementById("f-subcat-icon"), fSubcatName: document.getElementById("f-subcat-name"),
-    fGoalTag: document.getElementById("f-goal-tag"), fGoalTitle: document.getElementById("f-goal-title"),
+    fGoalTag: document.getElementById("f-goal-tag"), fGoalTitle: document.getElementById("f-goal-title"), fGoalNotas: document.getElementById("f-goal-notas"),
     goalAutocomplete: document.getElementById("goalAutocomplete"), goalHint: document.getElementById("goalHint"),
+    linksSection: document.getElementById("linksSection"), linksChips: document.getElementById("linksChips"),
+    linkCat: document.getElementById("link-cat"), linkSubcat: document.getElementById("link-subcat"),
+    linkSearch: document.getElementById("link-search"), linkAutocomplete: document.getElementById("linkAutocomplete"), linkAdd: document.getElementById("linkAdd"),
     cancelModal: document.getElementById("cancelModal"), saveModal: document.getElementById("saveModal"),
     darkSwitch: document.getElementById("darkSwitch"), categoryToggles: document.getElementById("categoryToggles"),
     authBtn: document.getElementById("authBtn"), accountInfo: document.getElementById("accountInfo"),
     authOverlay: document.getElementById("authOverlay"), authEmail: document.getElementById("auth-email"),
     authPassword: document.getElementById("auth-password"), authMsg: document.getElementById("authMsg"),
     authSignin: document.getElementById("authSignin"), authSignup: document.getElementById("authSignup"), authCancel: document.getElementById("authCancel"),
-    connectOverlay: document.getElementById("connectOverlay"), connectSelect: document.getElementById("connect-select"),
-    connectFromTitle: document.getElementById("connectFromTitle"), connectSave: document.getElementById("connectSave"), connectCancel: document.getElementById("connectCancel")
+    onboardingOverlay: document.getElementById("onboardingOverlay"), onboardingList: document.getElementById("onboardingList"), onboardingSave: document.getElementById("onboardingSave"),
+    fSuggMsg: document.getElementById("f-sugg-msg"), fSuggName: document.getElementById("f-sugg-name"), fSuggEmail: document.getElementById("f-sugg-email"),
+    sendSuggestion: document.getElementById("sendSuggestion"), suggMsg: document.getElementById("suggMsg")
   };
 
   function uid(prefix) { return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -368,8 +437,9 @@
   }
 
   function isGoalDone(it) { return loggedIn ? !!effectiveMemo[it.id] : !!it.done; }
+  function goalDate(it) { return loggedIn ? (effectiveDateMemo[it.id] || null) : (it.doneAt || null); }
   function implierTitle(it) {
-    if (!loggedIn || explicitDoneIds.has(it.id)) return null;
+    if (!loggedIn || explicitDoneMap.hasOwnProperty(it.id)) return null;
     for (var i = 0; i < goals.length; i++) {
       var gl = goals[i];
       if (gl.id !== it.id && gl.implies && gl.implies.indexOf(it.id) !== -1 && effectiveMemo[gl.id]) return gl.title;
@@ -377,36 +447,57 @@
     return null;
   }
   function recomputeEffective() {
-    var memo = {};
-    function done(id, stack) {
-      if (memo.hasOwnProperty(id)) return memo[id];
-      if (stack.indexOf(id) !== -1) return false;
-      var result = explicitDoneIds.has(id);
-      if (!result) {
-        for (var i = 0; i < goals.length; i++) {
-          var gl = goals[i];
-          if (gl.id !== id && gl.implies && gl.implies.indexOf(id) !== -1) {
-            if (done(gl.id, stack.concat([id]))) { result = true; break; }
-          }
+    var memoDone = {}, memoDate = {};
+    function resolve(id, stack) {
+      if (memoDone.hasOwnProperty(id)) return;
+      if (stack.indexOf(id) !== -1) { memoDone[id] = false; memoDate[id] = null; return; }
+      if (explicitDoneMap.hasOwnProperty(id)) { memoDone[id] = true; memoDate[id] = explicitDoneMap[id]; return; }
+      var foundDone = false, foundDate = null;
+      for (var i = 0; i < goals.length; i++) {
+        var gl = goals[i];
+        if (gl.id !== id && gl.implies && gl.implies.indexOf(id) !== -1) {
+          resolve(gl.id, stack.concat([id]));
+          if (memoDone[gl.id]) { foundDone = true; foundDate = memoDate[gl.id]; break; }
         }
       }
-      memo[id] = result;
-      return result;
+      memoDone[id] = foundDone; memoDate[id] = foundDate;
     }
-    goals.forEach(function (gl) { done(gl.id, []); });
-    effectiveMemo = memo;
+    goals.forEach(function (gl) { resolve(gl.id, []); });
+    effectiveMemo = memoDone; effectiveDateMemo = memoDate;
   }
 
   function switchPrimaryTab(tab) {
-    var isAch = tab === "ach";
-    els.tabAch.classList.toggle("active", isAch);
-    els.tabSettings.classList.toggle("active", !isAch);
-    els.viewAch.style.display = isAch ? "" : "none";
-    els.viewSettings.style.display = isAch ? "none" : "";
-    if (!isAch) renderSettings();
+    els.tabAch.classList.toggle("active", tab === "ach");
+    els.tabMap.classList.toggle("active", tab === "map");
+    els.tabSettings.classList.toggle("active", tab === "settings");
+    els.viewAch.style.display = tab === "ach" ? "" : "none";
+    els.viewMap.style.display = tab === "map" ? "" : "none";
+    els.viewSettings.style.display = tab === "settings" ? "" : "none";
+    if (tab === "settings") renderSettings();
   }
   els.tabAch.addEventListener("click", function () { switchPrimaryTab("ach"); });
+  els.tabMap.addEventListener("click", function () { switchPrimaryTab("map"); });
   els.tabSettings.addEventListener("click", function () { switchPrimaryTab("settings"); });
+
+  /* ---------- Suggestions ---------- */
+  els.sendSuggestion.addEventListener("click", function () {
+    var message = els.fSuggMsg.value.trim();
+    if (!message) { els.fSuggMsg.focus(); return; }
+    if (SUGGESTIONS_WEBHOOK_URL.indexOf("COLOCA_AQUI") !== -1) {
+      els.suggMsg.textContent = "O envio de sugestões ainda não está configurado.";
+      return;
+    }
+    var body = new URLSearchParams({
+      message: message, name: els.fSuggName.value.trim(), email: els.fSuggEmail.value.trim(),
+      version: "v0.8", lang: "pt-PT", site: "achievements"
+    });
+    fetch(SUGGESTIONS_WEBHOOK_URL, { method: "POST", mode: "no-cors", body: body })
+      .then(function () {
+        els.suggMsg.textContent = "Obrigado! A sugestão foi enviada.";
+        els.fSuggMsg.value = ""; els.fSuggName.value = ""; els.fSuggEmail.value = "";
+      })
+      .catch(function () { els.suggMsg.textContent = "Não foi possível enviar agora. Tenta mais tarde."; });
+  });
 
   /* ---------- Auth ---------- */
   function renderAuth() {
@@ -447,7 +538,10 @@
   function handleAuthState(session) {
     if (session && session.user) {
       loggedIn = true; userId = session.user.id; userEmail = session.user.email;
-      loadCloudData().then(function () { renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView(); });
+      loadCloudData().then(function (needsOnboarding) {
+        renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView();
+        if (needsOnboarding) openOnboarding();
+      });
     } else {
       loggedIn = false; userId = null; userEmail = null; isAdmin = false;
       renderAuth();
@@ -467,13 +561,14 @@
     var itemsRes = await sb.from("site_shared_items").select("*").eq("site_id", SITE_ID);
     var items = itemsRes.data || [];
     subcats = items.filter(function (r) { return r.kind === "subcategory"; }).map(function (r) { return { id: r.id, categoryId: r.category_id, icon: r.icon, name: r.title }; });
-    goals = items.filter(function (r) { return r.kind === "goal"; }).map(function (r) { return { id: r.id, subcategoryIds: r.subcategory_ids || [], tag: r.tag || "", title: r.title, implies: r.implies || [] }; });
+    goals = items.filter(function (r) { return r.kind === "goal"; }).map(function (r) { return { id: r.id, subcategoryIds: r.subcategory_ids || [], tag: r.tag || "", title: r.title, notas: r.notas || "", implies: r.implies || [] }; });
 
     var completions = await fetchSiteRow("concluidos");
-    explicitDoneIds = new Set(completions || []);
+    explicitDoneMap = completions && typeof completions === "object" && !Array.isArray(completions) ? completions : {};
     recomputeEffective();
 
     var settings = await fetchSiteRow("definicoes");
+    var needsOnboarding = !settings;
     if (settings) {
       theme = settings.theme || theme;
       var disabled = settings.disabled_categories || [];
@@ -483,6 +578,8 @@
 
     var profRes = await sb.from("profiles").select("is_admin").eq("id", userId).maybeSingle();
     isAdmin = !!(profRes.data && profRes.data.is_admin);
+
+    return needsOnboarding;
   }
 
   if (sb) {
@@ -494,7 +591,35 @@
     if (loggedIn) saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
     else { save(K_THEME, theme); save(K_CATS, categories); }
   }
-  function persistCompletions() { if (loggedIn) saveKey("concluidos", Array.from(explicitDoneIds)); }
+  function persistCompletions() { if (loggedIn) saveKey("concluidos", explicitDoneMap); }
+
+  /* ---------- Onboarding (first login) ---------- */
+  function openOnboarding() {
+    els.onboardingList.innerHTML = "";
+    categories.forEach(function (c) {
+      var row = document.createElement("div");
+      row.className = "row";
+      var left = document.createElement("div");
+      left.className = "left";
+      left.innerHTML = '<span>' + c.icon + '</span><span>' + c.name + '</span>';
+      var box = document.createElement("div");
+      box.className = "checkbox" + (c.enabled ? " on" : "");
+      box.textContent = c.enabled ? "\u2713" : "";
+      box.addEventListener("click", function () {
+        c.enabled = !c.enabled;
+        box.classList.toggle("on", c.enabled);
+        box.textContent = c.enabled ? "\u2713" : "";
+      });
+      row.appendChild(left); row.appendChild(box);
+      els.onboardingList.appendChild(row);
+    });
+    els.onboardingOverlay.classList.add("show");
+  }
+  els.onboardingSave.addEventListener("click", function () {
+    persistSettings();
+    els.onboardingOverlay.classList.remove("show");
+    renderCategoryStrip(); renderAchView();
+  });
 
   /* ---------- Category strip ---------- */
   function renderCategoryStrip() {
@@ -632,6 +757,13 @@
       t.textContent = it.title;
       info.appendChild(t);
 
+      if (it.notas) {
+        var notasEl = document.createElement("div");
+        notasEl.className = "gnotes";
+        notasEl.textContent = it.notas;
+        info.appendChild(notasEl);
+      }
+
       var implier = implierTitle(it);
       if (implier) {
         var note = document.createElement("div");
@@ -649,10 +781,6 @@
           var chip = document.createElement("span");
           chip.className = "chip";
           chip.appendChild(document.createTextNode("\u2192 " + target.title));
-          var xBtn = document.createElement("button");
-          xBtn.textContent = "\u00d7";
-          xBtn.addEventListener("click", function (e) { e.stopPropagation(); removeImplication(it, targetId); });
-          chip.appendChild(xBtn);
           links.appendChild(chip);
         });
         info.appendChild(links);
@@ -660,24 +788,23 @@
 
       row.appendChild(info);
 
+      var side = document.createElement("div");
+      side.className = "goal-side";
+      var dateStr = formatDate(goalDate(it));
+      if (dateStr) {
+        var dateEl = document.createElement("div");
+        dateEl.className = "gdate";
+        dateEl.textContent = dateStr;
+        side.appendChild(dateEl);
+      }
       var actions = document.createElement("div");
       actions.className = "goal-actions";
-
-      if (loggedIn) {
-        var linkBtn = document.createElement("button");
-        linkBtn.className = "link-action";
-        linkBtn.textContent = "\ud83d\udd17 Ligar";
-        linkBtn.addEventListener("click", function (e) { e.stopPropagation(); openConnectModal(it); });
-        actions.appendChild(linkBtn);
-      }
-
       var editBtn = document.createElement("button");
       editBtn.className = "icon-btn";
       editBtn.setAttribute("aria-label", "Editar objetivo");
       editBtn.textContent = "\u270e";
       editBtn.addEventListener("click", function (e) { e.stopPropagation(); openGoalModal(it); });
       actions.appendChild(editBtn);
-
       if (!loggedIn || isAdmin) {
         var del = document.createElement("button");
         del.className = "icon-btn danger";
@@ -686,68 +813,14 @@
         del.addEventListener("click", function (e) { e.stopPropagation(); deleteGoal(it); });
         actions.appendChild(del);
       }
-      row.appendChild(actions);
+      side.appendChild(actions);
+      row.appendChild(side);
 
       els.goalList.appendChild(row);
     });
   }
 
   els.backToSubcats.addEventListener("click", function () { achView = "subcats"; renderAchView(); });
-
-  /* ---------- Connect modal ---------- */
-  function openConnectModal(it) {
-    connectingGoal = it;
-    els.connectFromTitle.textContent = it.title;
-    els.connectSelect.innerHTML = "";
-    var bySubcat = {};
-    goals.forEach(function (gl) {
-      if (gl.id === it.id) return;
-      if (it.implies && it.implies.indexOf(gl.id) !== -1) return;
-      var subNames = (gl.subcategoryIds || []).map(function (sid) {
-        var sub = null;
-        for (var i = 0; i < subcats.length; i++) if (subcats[i].id === sid) sub = subcats[i];
-        return sub ? sub.name : null;
-      }).filter(Boolean);
-      var groupName = subNames.length ? subNames[0] : "Outras";
-      if (!bySubcat[groupName]) bySubcat[groupName] = [];
-      bySubcat[groupName].push(gl);
-    });
-    Object.keys(bySubcat).sort().forEach(function (groupName) {
-      var group = document.createElement("optgroup");
-      group.label = groupName;
-      bySubcat[groupName].forEach(function (gl) {
-        var opt = document.createElement("option");
-        opt.value = gl.id;
-        opt.textContent = gl.title;
-        group.appendChild(opt);
-      });
-      els.connectSelect.appendChild(group);
-    });
-    els.connectOverlay.classList.add("show");
-  }
-  function closeConnectModal() { els.connectOverlay.classList.remove("show"); connectingGoal = null; }
-  els.connectCancel.addEventListener("click", closeConnectModal);
-  els.connectOverlay.addEventListener("click", function (e) { if (e.target === els.connectOverlay) closeConnectModal(); });
-  els.connectSave.addEventListener("click", function () {
-    var targetId = els.connectSelect.value;
-    if (!targetId || !connectingGoal) { closeConnectModal(); return; }
-    connectingGoal.implies = connectingGoal.implies || [];
-    if (connectingGoal.implies.indexOf(targetId) === -1) connectingGoal.implies.push(targetId);
-    persistImplies(connectingGoal);
-    recomputeEffective();
-    closeConnectModal();
-    renderDetail(); renderSubcats();
-  });
-  function removeImplication(it, targetId) {
-    it.implies = (it.implies || []).filter(function (x) { return x !== targetId; });
-    persistImplies(it);
-    recomputeEffective();
-    renderDetail(); renderSubcats();
-  }
-  function persistImplies(it) {
-    if (loggedIn) sb.from("site_shared_items").update({ implies: it.implies }).eq("id", it.id).then(function () {});
-    else save(K_GOALS, goals);
-  }
 
   /* ---------- Data mutations ---------- */
   function addSubcat(name, icon) {
@@ -769,18 +842,16 @@
     else save(K_SUBCATS, subcats);
     renderSubcats();
   }
-  function addGoal(subcategoryId, tag, title) {
+  function addGoal(subcategoryId, tag, title, notas) {
     if (loggedIn) {
-      sb.from("site_shared_items").insert({ site_id: SITE_ID, kind: "goal", subcategory_ids: [subcategoryId], tag: tag, title: title, created_by: userId })
+      sb.from("site_shared_items").insert({ site_id: SITE_ID, kind: "goal", subcategory_ids: [subcategoryId], tag: tag, title: title, notas: notas, created_by: userId })
         .select().single().then(function (res) {
-          if (res.data) goals.push({ id: res.data.id, subcategoryIds: res.data.subcategory_ids || [], tag: res.data.tag || "", title: res.data.title, implies: res.data.implies || [] });
+          if (res.data) goals.push({ id: res.data.id, subcategoryIds: res.data.subcategory_ids || [], tag: res.data.tag || "", title: res.data.title, notas: res.data.notas || "", implies: res.data.implies || [] });
           recomputeEffective();
           renderDetail(); renderSubcats();
-        }, function (err) {
-          alert("Não foi possível criar: talvez já exista um objetivo com esse título.");
-        });
+        }, function () { alert("Não foi possível criar: talvez já exista um objetivo com esse título."); });
     } else {
-      goals.push({ id: uid("g"), subcategoryIds: [subcategoryId], tag: tag, title: title, implies: [], done: false });
+      goals.push({ id: uid("g"), subcategoryIds: [subcategoryId], tag: tag, title: title, notas: notas, implies: [], done: false, doneAt: null });
       save(K_GOALS, goals);
       renderDetail(); renderSubcats();
     }
@@ -792,19 +863,40 @@
     else save(K_GOALS, goals);
     renderDetail(); renderSubcats();
   }
-  function updateGoal(it, tag, title) {
-    it.tag = tag; it.title = title;
-    if (loggedIn) sb.from("site_shared_items").update({ tag: tag, title: title }).eq("id", it.id).then(function () {});
+  function updateGoal(it, tag, title, notas) {
+    it.tag = tag; it.title = title; it.notas = notas;
+    if (loggedIn) sb.from("site_shared_items").update({ tag: tag, title: title, notas: notas }).eq("id", it.id).then(function () {});
     else save(K_GOALS, goals);
     renderDetail(); renderSubcats();
   }
+  function addImplication(from, targetId) {
+    from.implies = from.implies || [];
+    if (from.implies.indexOf(targetId) !== -1 || targetId === from.id) return;
+    from.implies.push(targetId);
+    persistImplies(from);
+    recomputeEffective();
+    renderDetail(); renderSubcats();
+  }
+  function removeImplication(it, targetId) {
+    it.implies = (it.implies || []).filter(function (x) { return x !== targetId; });
+    persistImplies(it);
+    recomputeEffective();
+    renderDetail(); renderSubcats();
+  }
+  function persistImplies(it) {
+    if (loggedIn) sb.from("site_shared_items").update({ implies: it.implies }).eq("id", it.id).then(function () {});
+    else save(K_GOALS, goals);
+  }
   function toggleGoal(it) {
+    var now = new Date().toISOString();
     if (loggedIn) {
-      if (explicitDoneIds.has(it.id)) explicitDoneIds.delete(it.id); else explicitDoneIds.add(it.id);
+      if (explicitDoneMap.hasOwnProperty(it.id)) delete explicitDoneMap[it.id];
+      else explicitDoneMap[it.id] = now;
       persistCompletions();
       recomputeEffective();
     } else {
       it.done = !it.done;
+      it.doneAt = it.done ? now : null;
       save(K_GOALS, goals);
     }
     renderDetail(); renderSubcats();
@@ -855,11 +947,18 @@
     els.subcatFields.style.display = "none"; els.goalFields.style.display = "";
     els.fGoalTag.value = existing ? existing.tag : "";
     els.fGoalTitle.value = existing ? existing.title : "";
+    els.fGoalNotas.value = existing ? (existing.notas || "") : "";
     els.goalHint.textContent = existing ? "" : "Se já existir um objetivo com este título, é associado a esta subcategoria em vez de duplicado.";
     hideAutocomplete();
+    if (existing) {
+      els.linksSection.style.display = "";
+      setupLinksSection(existing);
+    } else {
+      els.linksSection.style.display = "none";
+    }
     els.overlay.classList.add("show"); els.fGoalTitle.focus();
   }
-  function closeModal() { els.overlay.classList.remove("show"); hideAutocomplete(); }
+  function closeModal() { els.overlay.classList.remove("show"); hideAutocomplete(); hideLinkAutocomplete(); }
   els.openAddSubcat.addEventListener("click", function () { openSubcatModal(null); });
   els.openAddGoal.addEventListener("click", function () { openGoalModal(null); });
   els.cancelModal.addEventListener("click", closeModal);
@@ -877,18 +976,19 @@
       var title = els.fGoalTitle.value.trim();
       if (!title) { els.fGoalTitle.focus(); return; }
       var tag = els.fGoalTag.value.trim();
+      var notas = els.fGoalNotas.value.trim();
       if (editingGoal) {
-        updateGoal(editingGoal, tag, title);
+        updateGoal(editingGoal, tag, title, notas);
       } else {
         var existing = selectedExistingGoal && selectedExistingGoal.title.toLowerCase() === title.toLowerCase() ? selectedExistingGoal : findGoalByTitle(title);
         if (existing) attachGoalToSubcat(existing, activeSubcat);
-        else addGoal(activeSubcat, tag, title);
+        else addGoal(activeSubcat, tag, title, notas);
       }
       closeModal();
     }
   });
 
-  /* ---------- Autocomplete for goal title ---------- */
+  /* ---------- Autocomplete for goal title (create) ---------- */
   function hideAutocomplete() { els.goalAutocomplete.classList.remove("show"); els.goalAutocomplete.innerHTML = ""; }
   els.fGoalTitle.addEventListener("input", function () {
     selectedExistingGoal = null;
@@ -918,6 +1018,87 @@
     els.goalAutocomplete.classList.add("show");
   });
   els.fGoalTitle.addEventListener("blur", function () { setTimeout(hideAutocomplete, 150); });
+
+  /* ---------- Links section inside edit-goal modal ---------- */
+  function renderLinksChips(goal) {
+    els.linksChips.innerHTML = "";
+    (goal.implies || []).forEach(function (targetId) {
+      var target = goalById(targetId);
+      if (!target) return;
+      var chip = document.createElement("span");
+      chip.className = "chip";
+      chip.appendChild(document.createTextNode("\u2192 " + target.title));
+      var xBtn = document.createElement("button");
+      xBtn.textContent = "\u00d7";
+      xBtn.addEventListener("click", function () { removeImplication(goal, targetId); renderLinksChips(goal); });
+      chip.appendChild(xBtn);
+      els.linksChips.appendChild(chip);
+    });
+  }
+  function setupLinksSection(goal) {
+    renderLinksChips(goal);
+    els.linkCat.innerHTML = "";
+    categories.forEach(function (c) {
+      var opt = document.createElement("option");
+      opt.value = c.id; opt.textContent = c.name;
+      els.linkCat.appendChild(opt);
+    });
+    els.linkSearch.value = "";
+    linkSelectedGoal = null;
+    refreshLinkSubcats(goal);
+  }
+  function refreshLinkSubcats(goal) {
+    els.linkSubcat.innerHTML = "";
+    subcatsForCategory(els.linkCat.value).forEach(function (s) {
+      var opt = document.createElement("option");
+      opt.value = s.id; opt.textContent = s.name;
+      els.linkSubcat.appendChild(opt);
+    });
+    refreshLinkResults(goal);
+  }
+  function refreshLinkResults(goal) {
+    hideLinkAutocomplete();
+    linkSelectedGoal = null;
+    var subcatId = els.linkSubcat.value;
+    var q = els.linkSearch.value.trim().toLowerCase();
+    if (!subcatId) return;
+    var matches = goals.filter(function (gl) {
+      if (gl.id === goal.id) return false;
+      if (goal.implies && goal.implies.indexOf(gl.id) !== -1) return false;
+      if (gl.subcategoryIds.indexOf(subcatId) === -1) return false;
+      if (q && gl.title.toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    }).slice(0, 10);
+    if (matches.length === 0) return;
+    els.linkAutocomplete.innerHTML = "";
+    matches.forEach(function (gl) {
+      var item = document.createElement("div");
+      item.className = "autocomplete-item";
+      item.textContent = gl.title;
+      item.addEventListener("click", function () {
+        linkSelectedGoal = gl;
+        els.linkSearch.value = gl.title;
+        hideLinkAutocomplete();
+      });
+      els.linkAutocomplete.appendChild(item);
+    });
+    els.linkAutocomplete.classList.add("show");
+  }
+  function hideLinkAutocomplete() { els.linkAutocomplete.classList.remove("show"); els.linkAutocomplete.innerHTML = ""; }
+  els.linkCat.addEventListener("change", function () { refreshLinkSubcats(editingGoal); });
+  els.linkSubcat.addEventListener("change", function () { refreshLinkResults(editingGoal); });
+  els.linkSearch.addEventListener("input", function () { refreshLinkResults(editingGoal); });
+  els.linkSearch.addEventListener("focus", function () { refreshLinkResults(editingGoal); });
+  els.linkSearch.addEventListener("blur", function () { setTimeout(hideLinkAutocomplete, 150); });
+  els.linkAdd.addEventListener("click", function () {
+    if (!editingGoal) return;
+    var target = linkSelectedGoal || findGoalByTitle(els.linkSearch.value);
+    if (!target) return;
+    addImplication(editingGoal, target.id);
+    renderLinksChips(editingGoal);
+    els.linkSearch.value = "";
+    linkSelectedGoal = null;
+  });
 
   /* ---------- Settings ---------- */
   function renderSettings() {
@@ -956,6 +1137,6 @@
 })();
 </script>
 
-<!-- v0.6 -->
+<!-- v0.8 -->
 </body>
 </html>
