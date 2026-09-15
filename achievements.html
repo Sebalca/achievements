@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Achievements</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --bg: #EDE4CC;
+    --surface: #F8F2E1;
+    --surface-2: #F1E8D2;
+    --ink: #1B2A22;
+    --ink-soft: #56624F;
+    --gold: #B8862F;
+    --gold-soft: rgba(184,134,47,0.16);
+    --rust: #9C3B2B;
+    --line: rgba(27,42,34,0.16);
+    --shadow: rgba(27,42,34,0.10);
+    --font-display: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  html[data-theme="dark"] {
+    --bg: #10160E;
+    --surface: #1C2A21;
+    --surface-2: #22322A;
+    --ink: #EDE4CC;
+    --ink-soft: #B4AC8F;
+    --gold: #D4A24C;
+    --gold-soft: rgba(212,162,76,0.18);
+    --rust: #C56548;
+    --line: rgba(237,228,204,0.14);
+    --shadow: rgba(0,0,0,0.35);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    transition: background .25s ease, color .25s ease;
+  }
+  a, button { font-family: inherit; }
+
+  .masthead {
+    max-width: 960px; margin: 0 auto; padding: 18px 18px 0;
+    display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;
+  }
+  .brand h1 { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; letter-spacing: 0.3px; margin: 0; }
+  .brand p { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.82rem; }
+  .nav-row { display: flex; align-items: center; gap: 14px; }
+  .primary-tabs { display: flex; gap: 4px; }
+  .primary-tabs button {
+    background: none; border: none; padding: 8px 4px; margin-right: 18px;
+    font-size: 0.95rem; color: var(--ink-soft); cursor: pointer; position: relative; font-family: var(--font-display);
+  }
+  .primary-tabs button.active { color: var(--ink); }
+  .primary-tabs button.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--rust); }
+  .auth-divider { width: 1px; height: 18px; background: var(--line); }
+  .auth-btn { background: none; border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; font-size: 0.82rem; color: var(--ink-soft); cursor: pointer; }
+  .auth-btn:hover { color: var(--ink); border-color: var(--gold); }
+  .auth-btn.logged { border-color: var(--gold); color: var(--ink); }
+
+  .config-banner {
+    max-width: 960px; margin: 10px auto 0; padding: 10px 18px; font-size: 0.78rem;
+    color: var(--ink-soft); background: var(--gold-soft); border: 1px solid var(--gold); border-radius: 8px; display: none;
+  }
+  .config-banner.show { display: block; }
+
+  main { max-width: 960px; margin: 0 auto; padding: 14px 18px 60px; border-top: 1px solid var(--line); margin-top: 14px; }
+
+  .category-strip { display: flex; flex-wrap: wrap; gap: 6px; padding: 14px 0; }
+  .cat-tab {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 6px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 999px;
+    padding: 7px 14px 7px 10px; cursor: pointer; color: var(--ink-soft); font-size: 0.86rem; white-space: nowrap;
+  }
+  .cat-tab .ico { font-size: 1rem; }
+  .cat-tab.active { background: var(--gold-soft); border-color: var(--gold); color: var(--ink); font-weight: 600; }
+
+  .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; gap: 10px; }
+  .cat-heading { font-family: var(--font-display); font-size: 1.25rem; }
+  .back-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .back-btn { background: none; border: none; color: var(--ink-soft); font-size: 0.86rem; cursor: pointer; padding: 4px 0; }
+  .back-btn:hover { color: var(--ink); }
+  .add-btn {
+    background: var(--ink); color: var(--bg); border: none; border-radius: 999px;
+    padding: 9px 16px; font-size: 0.86rem; cursor: pointer; font-weight: 600; white-space: nowrap;
+  }
+  html[data-theme="dark"] .add-btn { background: var(--gold); color: #14200F; }
+
+  .subcat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+  .subcat-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 16px 14px; cursor: pointer; box-shadow: 0 2px 8px var(--shadow); transition: border-color .15s ease;
+  }
+  .subcat-card:hover { border-color: var(--gold); }
+  .subcat-card .top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .subcat-card .ico {
+    width: 36px; height: 36px; border-radius: 50%; background: var(--surface-2); border: 2px solid var(--line);
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;
+  }
+  .subcat-card h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.02rem; margin: 0; }
+  .bar { height: 7px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
+  .bar .fill { height: 100%; background: linear-gradient(90deg, var(--gold-soft), var(--gold)); }
+  .subcat-card .count { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-soft); }
+
+  .empty { border: 1px dashed var(--line); border-radius: 10px; padding: 34px 20px; text-align: center; color: var(--ink-soft); grid-column: 1 / -1; }
+  .empty p { margin: 0 0 14px; font-size: 0.92rem; }
+
+  .detail-progress { margin-bottom: 18px; }
+  .detail-progress .bar { height: 8px; margin-bottom: 6px; }
+  .detail-progress .label { font-size: 0.8rem; color: var(--ink-soft); text-align: center; }
+  .goal-list { display: flex; flex-direction: column; gap: 8px; }
+  .goal-item {
+    display: flex; align-items: center; gap: 12px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 10px; padding: 11px 12px; cursor: pointer; user-select: none;
+  }
+  .goal-item.done { background: var(--gold-soft); border-color: var(--gold); }
+  .goal-item .gcheck {
+    flex: 0 0 24px; width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--gold);
+    display: flex; align-items: center; justify-content: center; font-size: 0.82rem; color: var(--gold);
+  }
+  .goal-item.done .gcheck { background: var(--gold); color: var(--surface); }
+  .goal-item .ginfo { flex: 1; min-width: 0; }
+  .goal-item .gtag { font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.05em; color: var(--gold); text-transform: uppercase; display: block; }
+  .goal-item .gtitle { font-size: 0.94rem; }
+  .goal-item.done .gtitle { color: var(--ink-soft); text-decoration: line-through; }
+  .goal-item .gdel { background: none; border: none; color: var(--ink-soft); font-size: 1.05rem; cursor: pointer; opacity: 0.5; flex-shrink: 0; }
+  .goal-item .gdel:hover { opacity: 1; color: var(--rust); }
+
+  .settings-section { margin-bottom: 28px; }
+  .settings-section h2 {
+    font-family: var(--font-display); font-weight: 400; font-size: 1.05rem;
+    margin: 14px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
+  .row:last-child { border-bottom: none; }
+  .row .left { display: flex; align-items: center; gap: 10px; }
+  .switch { position: relative; width: 42px; height: 24px; background: var(--surface-2); border: 1px solid var(--line); border-radius: 999px; cursor: pointer; flex-shrink: 0; }
+  .switch .knob { position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink-soft); transition: transform .2s ease, background .2s ease; }
+  .switch.on { background: var(--gold-soft); border-color: var(--gold); }
+  .switch.on .knob { transform: translateX(18px); background: var(--gold); }
+  .checkbox { width: 20px; height: 20px; border-radius: 5px; border: 1px solid var(--line); background: var(--surface-2); display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; font-size: 0.78rem; color: var(--gold); }
+  .checkbox.on { border-color: var(--gold); background: var(--gold-soft); }
+  .account-info { font-size: 0.86rem; color: var(--ink-soft); }
+  .account-info strong { color: var(--ink); }
+
+  .overlay { position: fixed; inset: 0; background: rgba(16,22,14,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 50; }
+  .overlay.show { display: flex; }
+  @media (min-width: 560px) { .overlay { align-items: center; } }
+  .modal { background: var(--surface); width: 100%; max-width: 440px; border-radius: 14px 14px 0 0; padding: 20px 20px 24px; max-height: 88vh; overflow-y: auto; }
+  @media (min-width: 560px) { .modal { border-radius: 14px; } }
+  .modal h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 16px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 5px; }
+  .field input[type=text], .field input[type=email], .field input[type=password] {
+    width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 11px; color: var(--ink); font-size: 0.92rem; font-family: inherit;
+  }
+  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .btn { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+  .btn.primary { background: var(--ink); color: var(--bg); }
+  html[data-theme="dark"] .btn.primary { background: var(--gold); color: #14200F; }
+  .btn.secondary { background: var(--surface-2); color: var(--ink); }
+  .auth-msg { font-size: 0.82rem; padding: 8px 0; color: var(--rust); }
+  .auth-msg.info { color: var(--ink-soft); }
+
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="brand">
+    <h1>Achievements</h1>
+    <p>O registo das conquistas da tua vida, por categoria.</p>
+  </div>
+  <div class="nav-row">
+    <div class="primary-tabs">
+      <button id="tab-ach" class="active">Achievements</button>
+      <button id="tab-settings">Definições</button>
+    </div>
+    <div class="auth-divider"></div>
+    <button class="auth-btn" id="authBtn">Entrar</button>
+  </div>
+</div>
+
+<div class="config-banner" id="configBanner">
+  Para ativar contas e sincronização, define SUPABASE_URL e SUPABASE_ANON_KEY no início do &lt;script&gt; deste ficheiro.
+</div>
+
+<main>
+  <section id="view-ach">
+    <div class="category-strip" id="categoryStrip"></div>
+    <div id="subcatsView">
+      <div class="toolbar">
+        <span class="cat-heading" id="catHeading"></span>
+        <button class="add-btn" id="openAddSubcat">+ Nova subcategoria</button>
+      </div>
+      <div id="subcatGrid" class="subcat-grid"></div>
+    </div>
+    <div id="detailView" style="display:none">
+      <div class="back-row">
+        <button class="back-btn" id="backToSubcats">&larr; Voltar</button>
+      </div>
+      <div class="toolbar">
+        <span class="cat-heading" id="subcatHeading"></span>
+        <button class="add-btn" id="openAddGoal">+ Novo objetivo</button>
+      </div>
+      <div class="detail-progress">
+        <div class="bar"><div class="fill" id="detailFill"></div></div>
+        <div class="label" id="detailLabel"></div>
+      </div>
+      <div id="goalList" class="goal-list"></div>
+    </div>
+  </section>
+
+  <section id="view-settings" style="display:none">
+    <div class="settings-section">
+      <h2>Conta</h2>
+      <div class="row">
+        <div class="account-info" id="accountInfo">Não tens sessão iniciada — os dados ficam guardados só neste dispositivo.</div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h2>Aparência</h2>
+      <div class="row">
+        <div class="left">Modo escuro</div>
+        <div class="switch" id="darkSwitch"><div class="knob"></div></div>
+      </div>
+    </div>
+    <div class="settings-section">
+      <h2>Categorias visíveis</h2>
+      <div id="categoryToggles"></div>
+    </div>
+  </section>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Nova subcategoria</h2>
+    <div id="subcatFields">
+      <div class="field"><label for="f-subcat-icon">Ícone (emoji)</label><input type="text" id="f-subcat-icon" placeholder="Ex.: 🏆" maxlength="2"></div>
+      <div class="field"><label for="f-subcat-name">Nome</label><input type="text" id="f-subcat-name" placeholder="Ex.: Filmes premiados"></div>
+    </div>
+    <div id="goalFields" style="display:none">
+      <div class="field"><label for="f-goal-tag">Etiqueta (opcional)</label><input type="text" id="f-goal-tag" placeholder="Ex.: 2024, Europa..."></div>
+      <div class="field"><label for="f-goal-title">Objetivo</label><input type="text" id="f-goal-title" placeholder="Ex.: Correr os primeiros 10km"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="cancelModal">Cancelar</button>
+      <button class="btn primary" id="saveModal">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="authOverlay">
+  <div class="modal">
+    <h2>Entrar ou criar conta</h2>
+    <div class="field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="tu@email.com"></div>
+    <div class="field"><label for="auth-password">Palavra-passe</label><input type="password" id="auth-password" placeholder="Pelo menos 6 caracteres"></div>
+    <div class="auth-msg" id="authMsg" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="authSignup">Criar conta</button>
+      <button class="btn primary" id="authSignin">Entrar</button>
+    </div>
+    <button class="back-btn" id="authCancel" style="margin-top:10px">Cancelar</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     SUPABASE — projeto partilhado da plataforma (frisk.pt)
+     Mesma conta/base de dados usada por outros sites (ex.: 3D Press).
+     Este site usa a tabela genérica "user_site_data" (site_id = "achievements"),
+     já preparada para o padrão multi-site: nada de tabelas dedicadas.
+     ========================================================= */
+  var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
+  var SITE_ID = "achievements";
+
+  var cloudEnabled = SUPABASE_URL.indexOf("COLOCA_AQUI") === -1 && SUPABASE_ANON_KEY.indexOf("COLOCA_AQUI") === -1;
+  var sb = cloudEnabled && window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+  var K_CATS = "ach_categories_v2";
+  var K_SUBCATS = "ach_subcats_v2";
+  var K_GOALS = "ach_goals_v2";
+  var K_THEME = "ach_theme_v1";
+  var K_ACTIVE_CAT = "ach_active_cat_v2";
+
+  var defaultCategories = [
+    { id: "pessoal",     name: "Pessoal",               icon: "\ud83e\udded", enabled: true },
+    { id: "viagens",     name: "Viagens",                icon: "\ud83e\uddf3", enabled: true },
+    { id: "restauracao", name: "Restauração",            icon: "\ud83c\udf7d\ufe0f", enabled: true },
+    { id: "cinema",      name: "Cinema",                 icon: "\ud83c\udfac", enabled: true },
+    { id: "desporto",    name: "Desporto",                icon: "\ud83c\udfc3", enabled: true },
+    { id: "carreira",    name: "Carreira",                icon: "\ud83d\udcbc", enabled: true },
+    { id: "leitura",     name: "Leitura & Aprendizagem", icon: "\ud83d\udcda", enabled: true },
+    { id: "hobbies",     name: "Hobbies & Criatividade", icon: "\ud83c\udfa8", enabled: true }
+  ];
+
+  function sc(id, categoryId, icon, name) { return { id: id, categoryId: categoryId, icon: icon, name: name }; }
+
+  var defaultSubcats = [
+    sc("pes-1", "pessoal", "\ud83c\udf31", "Marcos de crescimento pessoal"),
+    sc("pes-2", "pessoal", "\u2705", "Hábitos e disciplina"),
+    sc("pes-3", "pessoal", "\ud83e\udd4a", "Superação de medos"),
+    sc("via-1", "viagens", "\ud83c\udf0d", "Continentes visitados"),
+    sc("via-2", "viagens", "\ud83c\udfd5\ufe0f", "Tipos de viagem"),
+    sc("via-3", "viagens", "\ud83d\udd4c", "Maravilhas do mundo"),
+    sc("res-1", "restauracao", "\ud83c\udf5c", "Cozinhas do mundo"),
+    sc("res-2", "restauracao", "\u2b50", "Experiências gastronómicas"),
+    sc("res-3", "restauracao", "\ud83d\udc68\u200d\ud83c\udf73", "Desafios na cozinha"),
+    sc("cin-1", "cinema", "\ud83c\udfc6", "Vencedores do Óscar de Melhor Filme"),
+    sc("cin-2", "cinema", "\ud83c\udfa5", "Realizadores incontornáveis"),
+    sc("cin-3", "cinema", "\ud83c\udf9e\ufe0f", "Clássicos por década"),
+    sc("des-1", "desporto", "\ud83c\udfc3", "Corrida"),
+    sc("des-2", "desporto", "\ud83e\uddd7", "Experiências desportivas"),
+    sc("des-3", "desporto", "\ud83d\udcc6", "Consistência"),
+    sc("car-1", "carreira", "\ud83d\ude80", "Marcos profissionais"),
+    sc("car-2", "carreira", "\ud83d\udcc8", "Desenvolvimento"),
+    sc("car-3", "carreira", "\ud83d\udca1", "Empreendedorismo"),
+    sc("lei-1", "leitura", "\ud83d\udcd6", "Géneros literários"),
+    sc("lei-2", "leitura", "\ud83d\udd01", "Hábito de leitura"),
+    sc("lei-3", "leitura", "\ud83c\udf93", "Novas competências"),
+    sc("hob-1", "hobbies", "\ud83d\udd8c\ufe0f", "Expressão criativa"),
+    sc("hob-2", "hobbies", "\ud83d\udd28", "Projetos manuais"),
+    sc("hob-3", "hobbies", "\ud83e\udd1d", "Partilha")
+  ];
+
+  function g(subcategoryId, tag, title) { return { id: subcategoryId + "-" + Math.random().toString(36).slice(2, 8), subcategoryId: subcategoryId, tag: tag || "", title: title, done: false }; }
+
+  var defaultGoals = []
+    .concat([
+      g("pes-1", "", "Ler 12 livros de desenvolvimento pessoal num ano"),
+      g("pes-1", "", "Fazer terapia ou coaching pelo menos uma vez"),
+      g("pes-1", "", "Escrever um diário durante 30 dias seguidos"),
+      g("pes-1", "", "Meditar durante 21 dias seguidos"),
+      g("pes-1", "", "Definir e rever metas anuais")
+    ])
+    .concat([
+      g("pes-2", "", "Acordar antes das 7h durante 30 dias"),
+      g("pes-2", "", "Fazer um detox digital de um fim de semana"),
+      g("pes-2", "", "Manter um orçamento pessoal 3 meses seguidos"),
+      g("pes-2", "", "Eliminar um hábito nocivo durante 60 dias"),
+      g("pes-2", "", "Criar uma rotina matinal fixa")
+    ])
+    .concat([
+      g("pes-3", "", "Falar em público para um grupo grande"),
+      g("pes-3", "", "Enfrentar uma fobia pessoal"),
+      g("pes-3", "", "Pedir um aumento ou negociar salário"),
+      g("pes-3", "", "Terminar algo que sempre adiaste"),
+      g("pes-3", "", "Viajar sozinho/a")
+    ])
+    .concat([
+      g("via-1", "", "Europa"), g("via-1", "", "América do Norte"), g("via-1", "", "América do Sul"),
+      g("via-1", "", "África"), g("via-1", "", "Ásia"), g("via-1", "", "Oceânia")
+    ])
+    .concat([
+      g("via-2", "", "Fazer uma viagem sozinho/a"),
+      g("via-2", "", "Fazer uma viagem de mochila às costas"),
+      g("via-2", "", "Fazer um road trip"),
+      g("via-2", "", "Acampar ao ar livre"),
+      g("via-2", "", "Visitar uma ilha")
+    ])
+    .concat([
+      g("via-3", "", "Coliseu de Roma"), g("via-3", "", "Muralha da China"), g("via-3", "", "Taj Mahal"),
+      g("via-3", "", "Machu Picchu"), g("via-3", "", "Petra"), g("via-3", "", "Cristo Redentor")
+    ])
+    .concat([
+      g("res-1", "", "Comida japonesa"), g("res-1", "", "Comida indiana"), g("res-1", "", "Comida marroquina"),
+      g("res-1", "", "Comida peruana"), g("res-1", "", "Comida tailandesa")
+    ])
+    .concat([
+      g("res-2", "", "Jantar num restaurante com estrela Michelin"),
+      g("res-2", "", "Fazer uma prova de vinhos"),
+      g("res-2", "", "Comer street food num mercado local"),
+      g("res-2", "", "Fazer um curso de culinária")
+    ])
+    .concat([
+      g("res-3", "", "Cozinhar uma receita nova por mês, durante 6 meses"),
+      g("res-3", "", "Fazer pão caseiro do zero"),
+      g("res-3", "", "Organizar um jantar para 8 ou mais pessoas"),
+      g("res-3", "", "Dominar um prato tradicional português")
+    ])
+    .concat([
+      g("cin-1", "2026", "One Battle After Another"), g("cin-1", "2025", "Anora"),
+      g("cin-1", "2024", "Oppenheimer"), g("cin-1", "2023", "Tudo em Todo o Lado ao Mesmo Tempo"),
+      g("cin-1", "2022", "CODA"), g("cin-1", "2021", "Nomadland"), g("cin-1", "2020", "Parasitas"),
+      g("cin-1", "2019", "Green Book — Ao Fundo Havia Liberdade"), g("cin-1", "2018", "A Forma da Água"),
+      g("cin-1", "2017", "Moonlight"), g("cin-1", "2016", "Spotlight — O Caso Silenciado"),
+      g("cin-1", "2015", "Birdman"), g("cin-1", "2014", "12 Anos Escravo"), g("cin-1", "2013", "Argo"),
+      g("cin-1", "2012", "The Artist"), g("cin-1", "2011", "O Discurso do Rei"), g("cin-1", "2010", "Guerra ao Terror"),
+      g("cin-1", "2009", "Slumdog Millionaire"), g("cin-1", "2008", "Este País Não é Para Velhos"),
+      g("cin-1", "2007", "Os Infiltrados"), g("cin-1", "2006", "Crash — Colisão"), g("cin-1", "2005", "Million Dollar Baby"),
+      g("cin-1", "2004", "O Senhor dos Anéis: O Regresso do Rei"), g("cin-1", "2003", "Chicago"),
+      g("cin-1", "2002", "Uma Mente Brilhante"), g("cin-1", "2001", "Gladiador")
+    ])
+    .concat([
+      g("cin-2", "", "Ver um filme de Stanley Kubrick"), g("cin-2", "", "Ver um filme de Martin Scorsese"),
+      g("cin-2", "", "Ver um filme de Hayao Miyazaki"), g("cin-2", "", "Ver um filme de Akira Kurosawa"),
+      g("cin-2", "", "Ver um filme de Christopher Nolan"), g("cin-2", "", "Ver um filme de Quentin Tarantino")
+    ])
+    .concat([
+      g("cin-3", "1950s", "Um clássico dos anos 50"), g("cin-3", "1960s", "Um clássico dos anos 60"),
+      g("cin-3", "1970s", "Um clássico dos anos 70"), g("cin-3", "1980s", "Um clássico dos anos 80"),
+      g("cin-3", "1990s", "Um clássico dos anos 90"), g("cin-3", "2000s", "Um clássico dos anos 2000")
+    ])
+    .concat([
+      g("des-1", "", "Correr 5km sem parar"), g("des-1", "", "Correr 10km"),
+      g("des-1", "", "Completar uma meia-maratona"), g("des-1", "", "Completar uma maratona"),
+      g("des-1", "", "Participar numa corrida noturna")
+    ])
+    .concat([
+      g("des-2", "", "Fazer uma aula de escalada"), g("des-2", "", "Nadar em mar aberto"),
+      g("des-2", "", "Fazer uma rota de BTT"), g("des-2", "", "Fazer uma aula de artes marciais")
+    ])
+    .concat([
+      g("des-3", "", "Treinar 3x por semana durante um mês"),
+      g("des-3", "", "Fazer 30 dias seguidos de alongamentos"),
+      g("des-3", "", "Participar num desafio desportivo em grupo"),
+      g("des-3", "", "Aprender uma nova modalidade desportiva")
+    ])
+    .concat([
+      g("car-1", "", "Primeiro emprego"), g("car-1", "", "Primeira promoção"),
+      g("car-1", "", "Liderar uma equipa"), g("car-1", "", "Mudar de área profissional")
+    ])
+    .concat([
+      g("car-2", "", "Concluir uma certificação profissional"), g("car-2", "", "Falar numa conferência ou evento"),
+      g("car-2", "", "Fazer mentoring a alguém"), g("car-2", "", "Aprender uma nova ferramenta ou tecnologia")
+    ])
+    .concat([
+      g("car-3", "", "Lançar um projeto paralelo (side project)"), g("car-3", "", "Ganhar o primeiro euro fora do salário"),
+      g("car-3", "", "Publicar um artigo ou conteúdo profissional"), g("car-3", "", "Automatizar uma tarefa do teu trabalho")
+    ])
+    .concat([
+      g("lei-1", "", "Ler um romance clássico"), g("lei-1", "", "Ler um livro de ficção científica"),
+      g("lei-1", "", "Ler uma biografia"), g("lei-1", "", "Ler poesia")
+    ])
+    .concat([
+      g("lei-2", "", "Ler 12 livros num ano"), g("lei-2", "", "Participar num clube de leitura"),
+      g("lei-2", "", "Reler um livro favorito"), g("lei-2", "", "Ler um livro no idioma original")
+    ])
+    .concat([
+      g("lei-3", "", "Aprender uma nova língua até nível básico"), g("lei-3", "", "Tirar um curso online"),
+      g("lei-3", "", "Aprender a tocar um instrumento"), g("lei-3", "", "Aprender a programar")
+    ])
+    .concat([
+      g("hob-1", "", "Pintar um quadro"), g("hob-1", "", "Escrever um conto"),
+      g("hob-1", "", "Aprender fotografia"), g("hob-1", "", "Compor uma música")
+    ])
+    .concat([
+      g("hob-2", "", "Construir algo em madeira"), g("hob-2", "", "Fazer um jardim ou horta"),
+      g("hob-2", "", "Reparar algo em casa sozinho/a"), g("hob-2", "", "Criar algo em impressão 3D")
+    ])
+    .concat([
+      g("hob-3", "", "Expor ou partilhar publicamente uma criação"), g("hob-3", "", "Ensinar um hobby a outra pessoa"),
+      g("hob-3", "", "Vender uma criação própria"), g("hob-3", "", "Colaborar com outra pessoa num projeto criativo")
+    ]);
+
+  function load(key, fallback) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+    catch (e) { return fallback; }
+  }
+  function save(key, value) { localStorage.setItem(key, JSON.stringify(value)); }
+
+  var categories = load(K_CATS, defaultCategories);
+  var subcats = load(K_SUBCATS, defaultSubcats);
+  var goals = load(K_GOALS, defaultGoals);
+  var theme = load(K_THEME, "light");
+  var activeCat = load(K_ACTIVE_CAT, categories[0].id);
+
+  var loggedIn = false;
+  var userId = null;
+  var userEmail = null;
+
+  document.documentElement.setAttribute("data-theme", theme);
+
+  var achView = "subcats";
+  var activeSubcat = null;
+  var modalMode = "subcat";
+
+  var els = {
+    tabAch: document.getElementById("tab-ach"),
+    tabSettings: document.getElementById("tab-settings"),
+    viewAch: document.getElementById("view-ach"),
+    viewSettings: document.getElementById("view-settings"),
+    categoryStrip: document.getElementById("categoryStrip"),
+    subcatsView: document.getElementById("subcatsView"),
+    detailView: document.getElementById("detailView"),
+    catHeading: document.getElementById("catHeading"),
+    subcatGrid: document.getElementById("subcatGrid"),
+    openAddSubcat: document.getElementById("openAddSubcat"),
+    backToSubcats: document.getElementById("backToSubcats"),
+    subcatHeading: document.getElementById("subcatHeading"),
+    openAddGoal: document.getElementById("openAddGoal"),
+    detailFill: document.getElementById("detailFill"),
+    detailLabel: document.getElementById("detailLabel"),
+    goalList: document.getElementById("goalList"),
+    overlay: document.getElementById("overlay"),
+    modalTitle: document.getElementById("modalTitle"),
+    subcatFields: document.getElementById("subcatFields"),
+    goalFields: document.getElementById("goalFields"),
+    fSubcatIcon: document.getElementById("f-subcat-icon"),
+    fSubcatName: document.getElementById("f-subcat-name"),
+    fGoalTag: document.getElementById("f-goal-tag"),
+    fGoalTitle: document.getElementById("f-goal-title"),
+    cancelModal: document.getElementById("cancelModal"),
+    saveModal: document.getElementById("saveModal"),
+    darkSwitch: document.getElementById("darkSwitch"),
+    categoryToggles: document.getElementById("categoryToggles"),
+    authBtn: document.getElementById("authBtn"),
+    configBanner: document.getElementById("configBanner"),
+    accountInfo: document.getElementById("accountInfo"),
+    authOverlay: document.getElementById("authOverlay"),
+    authEmail: document.getElementById("auth-email"),
+    authPassword: document.getElementById("auth-password"),
+    authMsg: document.getElementById("authMsg"),
+    authSignin: document.getElementById("authSignin"),
+    authSignup: document.getElementById("authSignup"),
+    authCancel: document.getElementById("authCancel")
+  };
+
+  if (!cloudEnabled) els.configBanner.classList.add("show");
+
+  function uid(prefix) { return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function categoryById(id) { for (var i = 0; i < categories.length; i++) if (categories[i].id === id) return categories[i]; return null; }
+  function subcatsForCategory(catId) { return subcats.filter(function (s) { return s.categoryId === catId; }); }
+  function goalsForSubcat(subId) { return goals.filter(function (gl) { return gl.subcategoryId === subId; }); }
+
+  function switchPrimaryTab(tab) {
+    var isAch = tab === "ach";
+    els.tabAch.classList.toggle("active", isAch);
+    els.tabSettings.classList.toggle("active", !isAch);
+    els.viewAch.style.display = isAch ? "" : "none";
+    els.viewSettings.style.display = isAch ? "none" : "";
+    if (!isAch) renderSettings();
+  }
+  els.tabAch.addEventListener("click", function () { switchPrimaryTab("ach"); });
+  els.tabSettings.addEventListener("click", function () { switchPrimaryTab("settings"); });
+
+  /* ---------- Auth ---------- */
+  function renderAuth() {
+    els.authBtn.textContent = loggedIn ? "Sair" : "Entrar";
+    els.authBtn.classList.toggle("logged", loggedIn);
+    els.accountInfo.innerHTML = loggedIn
+      ? "Sessão iniciada como <strong>" + userEmail + "</strong>. Os dados sincronizam com a tua conta em toda a plataforma."
+      : "Não tens sessão iniciada — os dados ficam guardados só neste dispositivo.";
+  }
+  function showAuthMsg(text, isInfo) {
+    els.authMsg.textContent = text;
+    els.authMsg.className = "auth-msg" + (isInfo ? " info" : "");
+    els.authMsg.style.display = "";
+  }
+  function openAuthModal() {
+    els.authEmail.value = ""; els.authPassword.value = ""; els.authMsg.style.display = "none";
+    els.authOverlay.classList.add("show"); els.authEmail.focus();
+  }
+  function closeAuthModal() { els.authOverlay.classList.remove("show"); }
+  els.authCancel.addEventListener("click", closeAuthModal);
+  els.authOverlay.addEventListener("click", function (e) { if (e.target === els.authOverlay) closeAuthModal(); });
+
+  els.authBtn.addEventListener("click", function () {
+    if (!cloudEnabled) { els.configBanner.classList.add("show"); els.configBanner.scrollIntoView({ behavior: "smooth" }); return; }
+    if (loggedIn) { sb.auth.signOut().then(function () { location.reload(); }); }
+    else { openAuthModal(); }
+  });
+
+  els.authSignin.addEventListener("click", function () {
+    var email = els.authEmail.value.trim(); var pass = els.authPassword.value;
+    if (!email || !pass) { showAuthMsg("Preenche o email e a palavra-passe."); return; }
+    sb.auth.signInWithPassword({ email: email, password: pass }).then(function (res) {
+      if (res.error) { showAuthMsg(res.error.message); return; }
+      closeAuthModal();
+    });
+  });
+
+  els.authSignup.addEventListener("click", function () {
+    var email = els.authEmail.value.trim(); var pass = els.authPassword.value;
+    if (!email || !pass) { showAuthMsg("Preenche o email e a palavra-passe."); return; }
+    if (pass.length < 6) { showAuthMsg("A palavra-passe precisa de pelo menos 6 caracteres."); return; }
+    sb.auth.signUp({ email: email, password: pass }).then(function (res) {
+      if (res.error) { showAuthMsg(res.error.message); return; }
+      if (res.data && res.data.session) { closeAuthModal(); }
+      else { showAuthMsg("Conta criada. Verifica o teu email para confirmar antes de entrares.", true); }
+    });
+  });
+
+  function handleAuthState(session) {
+    if (session && session.user) {
+      loggedIn = true; userId = session.user.id; userEmail = session.user.email;
+      loadCloudData().then(function () {
+        renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView();
+      });
+    } else {
+      loggedIn = false; userId = null; userEmail = null;
+      renderAuth();
+    }
+  }
+
+  /* ---------- Cloud sync via tabela partilhada user_site_data ---------- */
+  async function fetchSiteRow(chave) {
+    var res = await sb.from("user_site_data").select("valor").eq("site_id", SITE_ID).eq("chave", chave).maybeSingle();
+    return res.data ? res.data.valor : null;
+  }
+  async function saveKey(chave, valor) {
+    if (!loggedIn) return;
+    await sb.from("user_site_data").upsert(
+      { user_id: userId, site_id: SITE_ID, chave: chave, valor: valor, updated_at: new Date().toISOString() },
+      { onConflict: "user_id,site_id,chave" }
+    );
+  }
+
+  async function loadCloudData() {
+    var remoteSubcats = await fetchSiteRow("subcategorias");
+    if (remoteSubcats === null) {
+      // primeiro login: sobe os dados locais atuais para a conta
+      await saveKey("subcategorias", subcats);
+      await saveKey("objetivos", goals);
+      await saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
+    } else {
+      subcats = remoteSubcats || [];
+      goals = (await fetchSiteRow("objetivos")) || [];
+      var settings = await fetchSiteRow("definicoes");
+      if (settings) {
+        theme = settings.theme || theme;
+        var disabled = settings.disabled_categories || [];
+        categories.forEach(function (c) { c.enabled = disabled.indexOf(c.id) === -1; });
+      }
+    }
+    document.documentElement.setAttribute("data-theme", theme);
+  }
+
+  if (cloudEnabled) {
+    sb.auth.onAuthStateChange(function (_event, session) { handleAuthState(session); });
+    sb.auth.getSession().then(function (res) { handleAuthState(res.data.session); });
+  }
+
+  /* ---------- Persist helpers (guest = localStorage, logado = Supabase) ---------- */
+  function persistSubcats() { if (loggedIn) saveKey("subcategorias", subcats); else save(K_SUBCATS, subcats); }
+  function persistGoals() { if (loggedIn) saveKey("objetivos", goals); else save(K_GOALS, goals); }
+  function persistSettings() {
+    if (loggedIn) saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
+    else { save(K_THEME, theme); save(K_CATS, categories); }
+  }
+
+  /* ---------- Category strip ---------- */
+  function renderCategoryStrip() {
+    var visible = categories.filter(function (c) { return c.enabled; });
+    if (!visible.some(function (c) { return c.id === activeCat; })) {
+      activeCat = visible.length ? visible[0].id : null;
+      if (!loggedIn) save(K_ACTIVE_CAT, activeCat);
+    }
+    els.categoryStrip.innerHTML = "";
+    visible.forEach(function (c) {
+      var btn = document.createElement("button");
+      btn.className = "cat-tab" + (c.id === activeCat ? " active" : "");
+      btn.innerHTML = '<span class="ico">' + c.icon + '</span><span>' + c.name + '</span>';
+      btn.addEventListener("click", function () {
+        activeCat = c.id;
+        if (!loggedIn) save(K_ACTIVE_CAT, activeCat);
+        achView = "subcats";
+        renderCategoryStrip();
+        renderAchView();
+      });
+      els.categoryStrip.appendChild(btn);
+    });
+  }
+
+  function renderAchView() {
+    if (achView === "subcats") {
+      els.subcatsView.style.display = ""; els.detailView.style.display = "none";
+      renderSubcats();
+    } else {
+      els.subcatsView.style.display = "none"; els.detailView.style.display = "";
+      renderDetail();
+    }
+  }
+
+  function renderSubcats() {
+    var cat = categoryById(activeCat);
+    els.catHeading.textContent = cat ? cat.name : "";
+    var list = subcatsForCategory(activeCat);
+    els.subcatGrid.innerHTML = "";
+    if (list.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty";
+      empty.innerHTML = "<p>Ainda não há subcategorias aqui. Cria a primeira.</p>";
+      els.subcatGrid.appendChild(empty);
+      return;
+    }
+    list.forEach(function (s) {
+      var gl = goalsForSubcat(s.id);
+      var done = gl.filter(function (x) { return x.done; }).length;
+      var total = gl.length;
+      var pct = total ? Math.round((done / total) * 100) : 0;
+
+      var card = document.createElement("div");
+      card.className = "subcat-card";
+      card.addEventListener("click", function () { activeSubcat = s.id; achView = "detail"; renderAchView(); });
+
+      var top = document.createElement("div");
+      top.className = "top";
+      top.innerHTML = '<div class="ico">' + s.icon + '</div><h3>' + s.name + '</h3>';
+      card.appendChild(top);
+
+      var bar = document.createElement("div");
+      bar.className = "bar";
+      var fill = document.createElement("div");
+      fill.className = "fill";
+      fill.style.width = pct + "%";
+      bar.appendChild(fill);
+      card.appendChild(bar);
+
+      var count = document.createElement("div");
+      count.className = "count";
+      count.textContent = done + " / " + total + " concluídos";
+      card.appendChild(count);
+
+      els.subcatGrid.appendChild(card);
+    });
+  }
+
+  function renderDetail() {
+    var s = null;
+    for (var i = 0; i < subcats.length; i++) if (subcats[i].id === activeSubcat) s = subcats[i];
+    if (!s) { achView = "subcats"; renderAchView(); return; }
+
+    els.subcatHeading.textContent = s.icon + "  " + s.name;
+    var gl = goalsForSubcat(s.id);
+    var done = gl.filter(function (x) { return x.done; }).length;
+    var total = gl.length;
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    els.detailFill.style.width = pct + "%";
+    els.detailLabel.textContent = done + " de " + total + " objetivos concluídos";
+
+    els.goalList.innerHTML = "";
+    if (gl.length === 0) {
+      var empty = document.createElement("div");
+      empty.className = "empty";
+      empty.innerHTML = "<p>Ainda não há objetivos nesta subcategoria. Adiciona o primeiro.</p>";
+      els.goalList.appendChild(empty);
+      return;
+    }
+    gl.forEach(function (it) {
+      var row = document.createElement("div");
+      row.className = "goal-item" + (it.done ? " done" : "");
+      row.addEventListener("click", function (e) { if (e.target.closest(".gdel")) return; toggleGoal(it); });
+
+      var check = document.createElement("div");
+      check.className = "gcheck";
+      check.textContent = it.done ? "\u2713" : "";
+      row.appendChild(check);
+
+      var info = document.createElement("div");
+      info.className = "ginfo";
+      if (it.tag) {
+        var tag = document.createElement("span");
+        tag.className = "gtag";
+        tag.textContent = it.tag;
+        info.appendChild(tag);
+      }
+      var t = document.createElement("div");
+      t.className = "gtitle";
+      t.textContent = it.title;
+      info.appendChild(t);
+      row.appendChild(info);
+
+      var del = document.createElement("button");
+      del.className = "gdel";
+      del.setAttribute("aria-label", "Remover objetivo");
+      del.textContent = "\u00d7";
+      del.addEventListener("click", function () { deleteGoal(it); });
+      row.appendChild(del);
+
+      els.goalList.appendChild(row);
+    });
+  }
+
+  els.backToSubcats.addEventListener("click", function () { achView = "subcats"; renderAchView(); });
+
+  /* ---------- Data mutations ---------- */
+  function addSubcat(name, icon) {
+    subcats.push({ id: uid("sc"), categoryId: activeCat, icon: icon, name: name });
+    persistSubcats();
+    renderSubcats();
+  }
+  function addGoal(subcategoryId, tag, title) {
+    goals.push({ id: uid("g"), subcategoryId: subcategoryId, tag: tag, title: title, done: false });
+    persistGoals();
+    renderDetail(); renderSubcats();
+  }
+  function toggleGoal(it) {
+    it.done = !it.done;
+    persistGoals();
+    renderDetail(); renderSubcats();
+  }
+  function deleteGoal(it) {
+    goals = goals.filter(function (x) { return x.id !== it.id; });
+    persistGoals();
+    renderDetail(); renderSubcats();
+  }
+  function setCategoryEnabled(cat, val) {
+    cat.enabled = val;
+    persistSettings();
+    renderCategoryStrip();
+    renderAchView();
+  }
+  function setTheme(t) {
+    theme = t;
+    document.documentElement.setAttribute("data-theme", theme);
+    persistSettings();
+  }
+
+  /* ---------- Modal (subcategory / goal) ---------- */
+  function openModal(mode) {
+    modalMode = mode;
+    if (mode === "subcat") {
+      els.modalTitle.textContent = "Nova subcategoria";
+      els.subcatFields.style.display = ""; els.goalFields.style.display = "none";
+      els.fSubcatIcon.value = ""; els.fSubcatName.value = "";
+      els.overlay.classList.add("show"); els.fSubcatName.focus();
+    } else {
+      els.modalTitle.textContent = "Novo objetivo";
+      els.subcatFields.style.display = "none"; els.goalFields.style.display = "";
+      els.fGoalTag.value = ""; els.fGoalTitle.value = "";
+      els.overlay.classList.add("show"); els.fGoalTitle.focus();
+    }
+  }
+  function closeModal() { els.overlay.classList.remove("show"); }
+  els.openAddSubcat.addEventListener("click", function () { openModal("subcat"); });
+  els.openAddGoal.addEventListener("click", function () { openModal("goal"); });
+  els.cancelModal.addEventListener("click", closeModal);
+  els.overlay.addEventListener("click", function (e) { if (e.target === els.overlay) closeModal(); });
+
+  els.saveModal.addEventListener("click", function () {
+    if (modalMode === "subcat") {
+      var name = els.fSubcatName.value.trim();
+      if (!name) { els.fSubcatName.focus(); return; }
+      var icon = els.fSubcatIcon.value.trim() || "\ud83c\udff5\ufe0f";
+      addSubcat(name, icon);
+      closeModal();
+    } else {
+      var title = els.fGoalTitle.value.trim();
+      if (!title) { els.fGoalTitle.focus(); return; }
+      addGoal(activeSubcat, els.fGoalTag.value.trim(), title);
+      closeModal();
+    }
+  });
+
+  /* ---------- Settings ---------- */
+  function renderSettings() {
+    els.darkSwitch.classList.toggle("on", theme === "dark");
+    els.categoryToggles.innerHTML = "";
+    categories.forEach(function (c) {
+      var row = document.createElement("div");
+      row.className = "row";
+      var left = document.createElement("div");
+      left.className = "left";
+      left.innerHTML = '<span>' + c.icon + '</span><span>' + c.name + '</span>';
+      var box = document.createElement("div");
+      box.className = "checkbox" + (c.enabled ? " on" : "");
+      box.textContent = c.enabled ? "\u2713" : "";
+      box.addEventListener("click", function () {
+        var val = !c.enabled;
+        box.classList.toggle("on", val);
+        box.textContent = val ? "\u2713" : "";
+        setCategoryEnabled(c, val);
+      });
+      row.appendChild(left);
+      row.appendChild(box);
+      els.categoryToggles.appendChild(row);
+    });
+  }
+  els.darkSwitch.addEventListener("click", function () {
+    var next = theme === "dark" ? "light" : "dark";
+    els.darkSwitch.classList.toggle("on", next === "dark");
+    setTheme(next);
+  });
+
+  /* ---------- Init ---------- */
+  renderAuth();
+  renderCategoryStrip();
+  renderAchView();
+})();
+</script>
+
+<!-- v0.4 -->
+</body>
+</html>
