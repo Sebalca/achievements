@@ -112,9 +112,11 @@
   .overlay { position: fixed; inset: 0; background: rgba(16,22,14,0.55); display: none; align-items: flex-end; justify-content: center; z-index: 50; }
   .overlay.show { display: flex; }
   @media (min-width: 560px) { .overlay { align-items: center; } }
-  .modal { background: var(--surface); width: 100%; max-width: 460px; border-radius: 14px 14px 0 0; padding: 20px 20px 24px; max-height: 88vh; overflow-y: auto; }
+  .modal { background: var(--surface); width: 100%; max-width: 460px; border-radius: 14px 14px 0 0; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; }
   @media (min-width: 560px) { .modal { border-radius: 14px; } }
-  .modal h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 16px; }
+  .modal h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0; padding: 20px 20px 16px; flex-shrink: 0; }
+  .modal-body { overflow-y: auto; padding: 0 20px; flex: 1 1 auto; min-height: 0; }
+  .modal > p, .modal > .onboarding-list, .modal > .field, .modal > .auth-msg { padding-left: 20px; padding-right: 20px; }
   .field { margin-bottom: 14px; position: relative; }
   .field label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 5px; }
   .field input[type=text], .field input[type=email], .field input[type=password], .field select, .field textarea {
@@ -132,7 +134,7 @@
   .autocomplete-item:hover, .autocomplete-item.active { background: var(--gold-soft); }
   .autocomplete-item .ac-sub { display: block; font-size: 0.7rem; color: var(--ink-soft); }
   .field-hint { font-size: 0.72rem; color: var(--ink-soft); margin-top: 4px; }
-  .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+  .modal-actions { display: flex; gap: 10px; padding: 14px 20px 20px; flex-shrink: 0; border-top: 1px solid var(--line); }
   .btn { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
   .btn.primary { background: var(--ink); color: var(--bg); }
   html[data-theme="dark"] .btn.primary { background: var(--gold); color: #14200F; }
@@ -144,6 +146,36 @@
   .links-section h3 { font-family: var(--font-display); font-weight: 400; font-size: 0.98rem; margin: 0 0 10px; }
   .links-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
   .links-chips .chip { font-size: 0.74rem; padding: 4px 9px 4px 10px; }
+
+  .version-footer { text-align: center; color: var(--ink-soft); font-size: 0.74rem; margin-top: 26px; opacity: 0.75; }
+
+  #suggestModal.modal {
+    position: fixed; inset: 0; width: auto; max-width: none; background: rgba(16,22,14,0.55);
+    display: flex; align-items: center; justify-content: center; z-index: 60;
+    border-radius: 0; max-height: none; overflow: visible;
+  }
+  #suggestModal.modal.hidden { display: none; }
+  #suggestModal .box {
+    background: var(--surface); width: 100%; max-width: 440px; margin: 16px;
+    border-radius: 14px; padding: 20px 20px 22px; max-height: 88vh; overflow-y: auto; position: relative;
+    box-shadow: 0 10px 30px var(--shadow);
+  }
+  #suggestModal .xclose { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.3rem; line-height: 1; color: var(--ink-soft); cursor: pointer; }
+  #suggestModal .xclose:hover { color: var(--rust); }
+  #suggestModal h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 4px; padding-right: 20px; }
+  #suggestModal .msub { color: var(--ink-soft); font-size: 0.82rem; margin: 0 0 14px; }
+  #suggestModal label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin: 12px 0 5px; }
+  #suggestModal label:first-of-type { margin-top: 0; }
+  #suggestModal textarea, #suggestModal input[type=text], #suggestModal input[type=email] {
+    width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 10px 11px; color: var(--ink); font-size: 0.92rem; font-family: inherit;
+  }
+  #suggestModal textarea { resize: vertical; }
+  #suggestModal .mbtns { display: flex; gap: 10px; margin-top: 18px; }
+  #suggestModal .act { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; background: var(--surface-2); color: var(--ink); }
+  #suggestModal .act.pri { background: var(--ink); color: var(--bg); }
+  html[data-theme="dark"] #suggestModal .act.pri { background: var(--gold); color: #14200F; }
+  #suggestModal .msg { font-size: 0.82rem; margin-top: 10px; color: var(--ink-soft); }
 
   :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 </style>
@@ -228,18 +260,36 @@
     </div>
     <div class="settings-section">
       <h2>Sugestões</h2>
-      <div class="field"><label for="f-sugg-msg">A tua sugestão ou reporte de bug</label><textarea id="f-sugg-msg" placeholder="Escreve aqui..."></textarea></div>
-      <div class="field"><label for="f-sugg-name">Nome (opcional)</label><input type="text" id="f-sugg-name"></div>
-      <div class="field"><label for="f-sugg-email">Email (opcional)</label><input type="text" id="f-sugg-email"></div>
-      <button class="add-btn" id="sendSuggestion" style="width:100%">Enviar sugestão</button>
-      <div class="field-hint" id="suggMsg" style="margin-top:8px"></div>
+      <p style="font-size:0.84rem;color:var(--ink-soft);margin-top:-6px">Encontraste um problema ou tens uma ideia? Diz-nos.</p>
+      <button class="add-btn" id="openSuggest" style="width:100%">💬 Sugestões</button>
     </div>
+    <div class="version-footer" id="versionFooter"></div>
   </section>
 </main>
+
+<div class="modal hidden" id="suggestModal">
+  <div class="box">
+    <button class="xclose" id="sgClose" aria-label="fechar">&times;</button>
+    <h3 data-i18n="sg_title">Sugestões</h3>
+    <div class="msub" data-i18n="sg_sub">Conta o que melhorar ou reportar.</div>
+    <label data-i18n="sg_msg">Mensagem</label>
+    <textarea id="sgMsg" rows="4"></textarea>
+    <label data-i18n="sg_name">Nome (opcional)</label>
+    <input id="sgName" type="text">
+    <label data-i18n="sg_email">Email (opcional)</label>
+    <input id="sgEmail" type="email" placeholder="nome@exemplo.pt">
+    <div class="mbtns">
+      <button class="act pri" id="sgSend" data-i18n="sg_send">Enviar</button>
+      <button class="act" id="sgCancel" data-i18n="btn_cancel">Cancelar</button>
+    </div>
+    <div class="msg" id="sgMsgOut"></div>
+  </div>
+</div>
 
 <div class="overlay" id="overlay">
   <div class="modal">
     <h2 id="modalTitle">Nova subcategoria</h2>
+    <div class="modal-body">
     <div id="subcatFields">
       <div class="field"><label for="f-subcat-icon">Ícone (emoji)</label><input type="text" id="f-subcat-icon" placeholder="Ex.: 🏆" maxlength="2"></div>
       <div class="field"><label for="f-subcat-name">Nome</label><input type="text" id="f-subcat-name" placeholder="Ex.: Filmes premiados"></div>
@@ -267,6 +317,7 @@
         </div>
         <button class="btn secondary" type="button" id="linkAdd" style="width:100%">+ Adicionar ligação</button>
       </div>
+    </div>
     </div>
     <div class="modal-actions">
       <button class="btn secondary" id="cancelModal">Cancelar</button>
@@ -296,7 +347,7 @@
       <button class="btn secondary" id="authSignup">Criar conta</button>
       <button class="btn primary" id="authSignin">Entrar</button>
     </div>
-    <button class="back-btn" id="authCancel" style="margin-top:10px">Cancelar</button>
+    <button class="back-btn" id="authCancel" style="padding:0 20px 18px;width:100%;text-align:center">Cancelar</button>
   </div>
 </div>
 
@@ -306,17 +357,19 @@
 
   var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
+  var APP_VERSION = "v0.8.2";
   var SITE_ID = "achievements";
   var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
   // Cola aqui o URL /exec da tua Google Apps Script Web App de sugestões (o mesmo do outro projeto, depois de adicionares a coluna "Site")
-  var SUGGESTIONS_WEBHOOK_URL = "COLOCA_AQUI_O_URL_DO_APPS_SCRIPT";
+  var SUGGESTIONS_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx7Zw-eJ-n25TcOLfuAqnrH6tFaojIu8k5LMjm84d5dzE6R_DFOLANcZPMLGAGgfJI78g/exec";
 
   var K_CATS = "ach_categories_v2";
   var K_SUBCATS = "ach_subcats_v2";
   var K_GOALS = "ach_goals_v4";
   var K_THEME = "ach_theme_v1";
   var K_ACTIVE_CAT = "ach_active_cat_v2";
+  var K_COMPLETIONS = "ach_completions_v1";
 
   var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   function formatDate(iso) {
@@ -383,7 +436,7 @@
   var activeCat = load(K_ACTIVE_CAT, categories[0].id);
 
   var loggedIn = false, userId = null, userEmail = null, isAdmin = false;
-  var explicitDoneMap = {};
+  var explicitDoneMap = load(K_COMPLETIONS, {});
   var effectiveMemo = {};
   var effectiveDateMemo = {};
   var editingSubcat = null;
@@ -421,8 +474,10 @@
     authPassword: document.getElementById("auth-password"), authMsg: document.getElementById("authMsg"),
     authSignin: document.getElementById("authSignin"), authSignup: document.getElementById("authSignup"), authCancel: document.getElementById("authCancel"),
     onboardingOverlay: document.getElementById("onboardingOverlay"), onboardingList: document.getElementById("onboardingList"), onboardingSave: document.getElementById("onboardingSave"),
-    fSuggMsg: document.getElementById("f-sugg-msg"), fSuggName: document.getElementById("f-sugg-name"), fSuggEmail: document.getElementById("f-sugg-email"),
-    sendSuggestion: document.getElementById("sendSuggestion"), suggMsg: document.getElementById("suggMsg")
+    versionFooter: document.getElementById("versionFooter"),
+    suggestModal: document.getElementById("suggestModal"), openSuggest: document.getElementById("openSuggest"),
+    sgMsg: document.getElementById("sgMsg"), sgName: document.getElementById("sgName"), sgEmail: document.getElementById("sgEmail"),
+    sgSend: document.getElementById("sgSend"), sgCancel: document.getElementById("sgCancel"), sgClose: document.getElementById("sgClose"), sgMsgOut: document.getElementById("sgMsgOut")
   };
 
   function uid(prefix) { return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -436,10 +491,10 @@
     return null;
   }
 
-  function isGoalDone(it) { return loggedIn ? !!effectiveMemo[it.id] : !!it.done; }
-  function goalDate(it) { return loggedIn ? (effectiveDateMemo[it.id] || null) : (it.doneAt || null); }
+  function isGoalDone(it) { return !!effectiveMemo[it.id]; }
+  function goalDate(it) { return effectiveDateMemo[it.id] || null; }
   function implierTitle(it) {
-    if (!loggedIn || explicitDoneMap.hasOwnProperty(it.id)) return null;
+    if (explicitDoneMap.hasOwnProperty(it.id)) return null;
     for (var i = 0; i < goals.length; i++) {
       var gl = goals[i];
       if (gl.id !== it.id && gl.implies && gl.implies.indexOf(it.id) !== -1 && effectiveMemo[gl.id]) return gl.title;
@@ -480,23 +535,29 @@
   els.tabSettings.addEventListener("click", function () { switchPrimaryTab("settings"); });
 
   /* ---------- Suggestions ---------- */
-  els.sendSuggestion.addEventListener("click", function () {
-    var message = els.fSuggMsg.value.trim();
-    if (!message) { els.fSuggMsg.focus(); return; }
+  function openSuggestModal() { els.sgMsgOut.textContent = ""; els.suggestModal.classList.remove("hidden"); els.sgMsg.focus(); }
+  function closeSuggestModal() { els.suggestModal.classList.add("hidden"); }
+  els.openSuggest.addEventListener("click", openSuggestModal);
+  els.sgCancel.addEventListener("click", closeSuggestModal);
+  els.sgClose.addEventListener("click", closeSuggestModal);
+  els.suggestModal.addEventListener("click", function (e) { if (e.target === els.suggestModal) closeSuggestModal(); });
+  els.sgSend.addEventListener("click", function () {
+    var message = els.sgMsg.value.trim();
+    if (!message) { els.sgMsg.focus(); return; }
     if (SUGGESTIONS_WEBHOOK_URL.indexOf("COLOCA_AQUI") !== -1) {
-      els.suggMsg.textContent = "O envio de sugestões ainda não está configurado.";
+      els.sgMsgOut.textContent = "O envio de sugestões ainda não está configurado.";
       return;
     }
     var body = new URLSearchParams({
-      message: message, name: els.fSuggName.value.trim(), email: els.fSuggEmail.value.trim(),
-      version: "v0.8", lang: "pt-PT", site: "achievements"
+      message: message, name: els.sgName.value.trim(), email: els.sgEmail.value.trim(),
+      version: APP_VERSION, lang: "pt-PT", site: "achievements"
     });
     fetch(SUGGESTIONS_WEBHOOK_URL, { method: "POST", mode: "no-cors", body: body })
       .then(function () {
-        els.suggMsg.textContent = "Obrigado! A sugestão foi enviada.";
-        els.fSuggMsg.value = ""; els.fSuggName.value = ""; els.fSuggEmail.value = "";
+        els.sgMsgOut.textContent = "Obrigado! A sugestão foi enviada.";
+        els.sgMsg.value = ""; els.sgName.value = ""; els.sgEmail.value = "";
       })
-      .catch(function () { els.suggMsg.textContent = "Não foi possível enviar agora. Tenta mais tarde."; });
+      .catch(function () { els.sgMsgOut.textContent = "Não foi possível enviar agora. Tenta mais tarde."; });
   });
 
   /* ---------- Auth ---------- */
@@ -591,7 +652,7 @@
     if (loggedIn) saveKey("definicoes", { theme: theme, disabled_categories: categories.filter(function (c) { return !c.enabled; }).map(function (c) { return c.id; }) });
     else { save(K_THEME, theme); save(K_CATS, categories); }
   }
-  function persistCompletions() { if (loggedIn) saveKey("concluidos", explicitDoneMap); }
+  function persistCompletions() { if (loggedIn) saveKey("concluidos", explicitDoneMap); else save(K_COMPLETIONS, explicitDoneMap); }
 
   /* ---------- Onboarding (first login) ---------- */
   function openOnboarding() {
@@ -772,7 +833,7 @@
         info.appendChild(note);
       }
 
-      if (loggedIn && it.implies && it.implies.length) {
+      if (it.implies && it.implies.length) {
         var links = document.createElement("div");
         links.className = "glinks";
         it.implies.forEach(function (targetId) {
@@ -889,16 +950,10 @@
   }
   function toggleGoal(it) {
     var now = new Date().toISOString();
-    if (loggedIn) {
-      if (explicitDoneMap.hasOwnProperty(it.id)) delete explicitDoneMap[it.id];
-      else explicitDoneMap[it.id] = now;
-      persistCompletions();
-      recomputeEffective();
-    } else {
-      it.done = !it.done;
-      it.doneAt = it.done ? now : null;
-      save(K_GOALS, goals);
-    }
+    if (explicitDoneMap.hasOwnProperty(it.id)) delete explicitDoneMap[it.id];
+    else explicitDoneMap[it.id] = now;
+    persistCompletions();
+    recomputeEffective();
     renderDetail(); renderSubcats();
   }
   function deleteGoal(it) {
@@ -1131,12 +1186,14 @@
   });
 
   /* ---------- Init ---------- */
+  els.versionFooter.textContent = "Achievements " + APP_VERSION;
+  recomputeEffective();
   renderAuth();
   renderCategoryStrip();
   renderAchView();
 })();
 </script>
 
-<!-- v0.8 -->
+<!-- v0.8.2 -->
 </body>
 </html>
