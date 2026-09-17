@@ -28,7 +28,7 @@
   .brand p { margin: 2px 0 0; color: var(--ink-soft); font-size: 0.82rem; }
   .nav-row { display: flex; align-items: center; gap: 14px; }
   .primary-tabs { display: flex; gap: 4px; }
-  .primary-tabs button { background: none; border: none; padding: 8px 4px; margin-right: 18px; font-size: 0.95rem; color: var(--ink-soft); cursor: pointer; position: relative; font-family: var(--font-display); }
+  .primary-tabs button, .primary-tabs a { background: none; border: none; padding: 8px 4px; margin-right: 18px; font-size: 0.95rem; color: var(--ink-soft); cursor: pointer; position: relative; font-family: var(--font-display); text-decoration: none; display: inline-block; }
   .primary-tabs button.active { color: var(--ink); }
   .primary-tabs button.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--rust); }
   .auth-divider { width: 1px; height: 18px; background: var(--line); }
@@ -149,33 +149,34 @@
 
   .version-footer { text-align: center; color: var(--ink-soft); font-size: 0.74rem; margin-top: 26px; opacity: 0.75; }
 
-  #suggestModal.modal {
+  #suggestModal.modal, #bulkModal.modal {
     position: fixed; inset: 0; width: auto; max-width: none; background: rgba(16,22,14,0.55);
     display: flex; align-items: center; justify-content: center; z-index: 60;
     border-radius: 0; max-height: none; overflow: visible;
   }
-  #suggestModal.modal.hidden { display: none; }
-  #suggestModal .box {
+  #suggestModal.modal.hidden, #bulkModal.modal.hidden { display: none; }
+  #suggestModal .box, #bulkModal .box {
     background: var(--surface); width: 100%; max-width: 440px; margin: 16px;
     border-radius: 14px; padding: 20px 20px 22px; max-height: 88vh; overflow-y: auto; position: relative;
     box-shadow: 0 10px 30px var(--shadow);
   }
-  #suggestModal .xclose { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.3rem; line-height: 1; color: var(--ink-soft); cursor: pointer; }
-  #suggestModal .xclose:hover { color: var(--rust); }
-  #suggestModal h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 4px; padding-right: 20px; }
-  #suggestModal .msub { color: var(--ink-soft); font-size: 0.82rem; margin: 0 0 14px; }
-  #suggestModal label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin: 12px 0 5px; }
-  #suggestModal label:first-of-type { margin-top: 0; }
-  #suggestModal textarea, #suggestModal input[type=text], #suggestModal input[type=email] {
+  #suggestModal .xclose, #bulkModal .xclose { position: absolute; top: 10px; right: 12px; background: none; border: none; font-size: 1.3rem; line-height: 1; color: var(--ink-soft); cursor: pointer; }
+  #suggestModal .xclose:hover, #bulkModal .xclose:hover { color: var(--rust); }
+  #suggestModal h3, #bulkModal h3 { font-family: var(--font-display); font-weight: 400; font-size: 1.15rem; margin: 0 0 4px; padding-right: 20px; }
+  #suggestModal .msub, #bulkModal .msub { color: var(--ink-soft); font-size: 0.82rem; margin: 0 0 14px; }
+  #suggestModal label, #bulkModal label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin: 12px 0 5px; }
+  #suggestModal label:first-of-type, #bulkModal label:first-of-type { margin-top: 0; }
+  #suggestModal textarea, #suggestModal input[type=text], #suggestModal input[type=email],
+  #bulkModal textarea, #bulkModal input[type=text], #bulkModal input[type=email] {
     width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
     padding: 10px 11px; color: var(--ink); font-size: 0.92rem; font-family: inherit;
   }
-  #suggestModal textarea { resize: vertical; }
-  #suggestModal .mbtns { display: flex; gap: 10px; margin-top: 18px; }
-  #suggestModal .act { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; background: var(--surface-2); color: var(--ink); }
-  #suggestModal .act.pri { background: var(--ink); color: var(--bg); }
-  html[data-theme="dark"] #suggestModal .act.pri { background: var(--gold); color: #14200F; }
-  #suggestModal .msg { font-size: 0.82rem; margin-top: 10px; color: var(--ink-soft); }
+  #suggestModal textarea, #bulkModal textarea { resize: vertical; }
+  #suggestModal .mbtns, #bulkModal .mbtns { display: flex; gap: 10px; margin-top: 18px; }
+  #suggestModal .act, #bulkModal .act { flex: 1; padding: 11px; border-radius: 8px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; background: var(--surface-2); color: var(--ink); }
+  #suggestModal .act.pri, #bulkModal .act.pri { background: var(--ink); color: var(--bg); }
+  html[data-theme="dark"] #suggestModal .act.pri, html[data-theme="dark"] #bulkModal .act.pri { background: var(--gold); color: #14200F; }
+  #suggestModal .msg, #bulkModal .msg { font-size: 0.82rem; margin-top: 10px; color: var(--ink-soft); }
 
   :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 </style>
@@ -190,7 +191,7 @@
   <div class="nav-row">
     <div class="primary-tabs">
       <button id="tab-ach" class="active">Achievements</button>
-      <button id="tab-map">Mapa Interativo</button>
+      <a id="tab-map" href="/map">Mapa Interativo</a>
       <button id="tab-settings">Definições</button>
     </div>
     <div class="auth-divider"></div>
@@ -212,7 +213,10 @@
       <div class="back-row"><button class="back-btn" id="backToSubcats">&larr; Voltar</button></div>
       <div class="toolbar">
         <span class="cat-heading" id="subcatHeading"></span>
-        <button class="add-btn" id="openAddGoal">+ Novo objetivo</button>
+        <div style="display:flex;gap:8px">
+          <button class="add-btn" id="openBulkAdd" style="background:none;border:1px solid var(--line);color:var(--ink-soft)">+ Lista de objetivos</button>
+          <button class="add-btn" id="openAddGoal">+ Novo objetivo</button>
+        </div>
       </div>
       <div class="detail-progress">
         <div class="bar"><div class="fill" id="detailFill"></div></div>
@@ -220,29 +224,6 @@
       </div>
       <div id="goalList" class="goal-list"></div>
     </div>
-  </section>
-
-  <section id="view-map" style="display:none">
-    <div class="map-wrap">
-      <svg viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <pattern id="ocean-dots" width="18" height="18" patternUnits="userSpaceOnUse">
-            <circle cx="2" cy="2" r="1" fill="var(--line)"></circle>
-          </pattern>
-        </defs>
-        <rect x="0" y="0" width="1000" height="500" fill="url(#ocean-dots)"></rect>
-        <rect x="0" y="0" width="1000" height="500" fill="none" stroke="var(--line)" stroke-width="2"></rect>
-        <g fill="var(--surface-2)" stroke="var(--gold)" stroke-width="2" stroke-linejoin="round">
-          <path d="M70,60 C130,40 210,50 250,90 C280,120 260,150 230,150 C250,170 240,200 210,210 C180,220 150,200 140,180 C110,190 80,170 75,140 C50,120 45,85 70,60 Z"></path>
-          <path d="M175,225 C210,215 240,235 245,270 C250,310 260,340 240,380 C225,410 195,415 180,395 C160,405 150,375 155,345 C140,320 145,285 160,260 C155,245 160,230 175,225 Z"></path>
-          <path d="M445,70 C480,55 520,65 530,90 C545,85 555,105 540,120 C555,135 540,155 515,150 C500,165 470,160 460,140 C440,145 425,120 435,100 C425,90 430,75 445,70 Z"></path>
-          <path d="M450,175 C490,165 530,180 545,215 C560,245 555,285 540,320 C530,350 535,385 510,400 C485,415 460,395 455,370 C430,360 425,325 435,295 C415,270 420,235 440,210 C430,195 435,180 450,175 Z"></path>
-          <path d="M580,55 C650,35 730,45 790,60 C850,50 900,70 890,105 C910,120 895,150 860,150 C870,175 840,195 810,185 C795,210 760,215 740,195 C700,210 660,195 645,165 C610,170 585,145 590,115 C570,105 565,75 580,55 Z"></path>
-          <path d="M790,335 C825,325 865,335 875,360 C885,385 865,405 835,400 C820,415 795,405 790,385 C770,375 775,350 790,335 Z"></path>
-        </g>
-      </svg>
-    </div>
-    <div class="map-caption">Mapa do mundo — em breve com destaque para os países e continentes já conquistados.</div>
   </section>
 
   <section id="view-settings" style="display:none">
@@ -283,6 +264,20 @@
       <button class="act" id="sgCancel" type="button" data-i18n="btn_cancel">Cancelar</button>
     </div>
     <div class="msg" id="sgMsgOut"></div>
+  </div>
+</div>
+
+<div class="modal hidden" id="bulkModal">
+  <div class="box">
+    <button class="xclose" id="bulkClose" type="button" aria-label="fechar">&times;</button>
+    <h3>Importar lista de objetivos</h3>
+    <div class="msub">Um objetivo por linha, no formato: Objetivo, etiqueta, notas (etiqueta e notas são opcionais). Se já existir um objetivo com o mesmo título, é associado em vez de duplicado.</div>
+    <textarea id="bulkText" rows="10" placeholder="Ir a Itália, Europa, Viagem em família&#10;Ver o pôr do sol na praia"></textarea>
+    <div class="mbtns">
+      <button class="act pri" id="bulkImport" type="button">Importar</button>
+      <button class="act" id="bulkCancel" type="button">Cancelar</button>
+    </div>
+    <div class="msg" id="bulkMsgOut"></div>
   </div>
 </div>
 
@@ -375,7 +370,7 @@
 
   var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
-  var APP_VERSION = "v0.11";
+  var APP_VERSION = "v0.12";
   var SITE_ID = "achievements";
   var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -480,7 +475,7 @@
 
   var els = {
     tabAch: document.getElementById("tab-ach"), tabMap: document.getElementById("tab-map"), tabSettings: document.getElementById("tab-settings"),
-    viewAch: document.getElementById("view-ach"), viewMap: document.getElementById("view-map"), viewSettings: document.getElementById("view-settings"),
+    viewAch: document.getElementById("view-ach"), viewSettings: document.getElementById("view-settings"),
     categoryStrip: document.getElementById("categoryStrip"), subcatsView: document.getElementById("subcatsView"),
     detailView: document.getElementById("detailView"), catHeading: document.getElementById("catHeading"),
     subcatGrid: document.getElementById("subcatGrid"), openAddSubcat: document.getElementById("openAddSubcat"),
@@ -508,7 +503,9 @@
     versionFooter: document.getElementById("versionFooter"),
     suggestModal: document.getElementById("suggestModal"), openSuggest: document.getElementById("openSuggest"),
     sgMsg: document.getElementById("sgMsg"), sgName: document.getElementById("sgName"), sgEmail: document.getElementById("sgEmail"),
-    sgSend: document.getElementById("sgSend"), sgCancel: document.getElementById("sgCancel"), sgClose: document.getElementById("sgClose"), sgMsgOut: document.getElementById("sgMsgOut")
+    sgSend: document.getElementById("sgSend"), sgCancel: document.getElementById("sgCancel"), sgClose: document.getElementById("sgClose"), sgMsgOut: document.getElementById("sgMsgOut"),
+    openBulkAdd: document.getElementById("openBulkAdd"), bulkModal: document.getElementById("bulkModal"), bulkText: document.getElementById("bulkText"),
+    bulkImport: document.getElementById("bulkImport"), bulkCancel: document.getElementById("bulkCancel"), bulkClose: document.getElementById("bulkClose"), bulkMsgOut: document.getElementById("bulkMsgOut")
   };
 
   function uid(prefix) { return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -554,15 +551,12 @@
 
   function switchPrimaryTab(tab) {
     els.tabAch.classList.toggle("active", tab === "ach");
-    els.tabMap.classList.toggle("active", tab === "map");
     els.tabSettings.classList.toggle("active", tab === "settings");
     els.viewAch.style.display = tab === "ach" ? "" : "none";
-    els.viewMap.style.display = tab === "map" ? "" : "none";
     els.viewSettings.style.display = tab === "settings" ? "" : "none";
     if (tab === "settings") renderSettings();
   }
   els.tabAch.addEventListener("click", function () { switchPrimaryTab("ach"); });
-  els.tabMap.addEventListener("click", function () { switchPrimaryTab("map"); });
   els.tabSettings.addEventListener("click", function () { switchPrimaryTab("settings"); });
 
   /* ---------- Suggestions ---------- */
@@ -592,6 +586,28 @@
       })
       .catch(function () { els.sgMsgOut.textContent = "Não foi possível enviar agora. Tenta mais tarde."; })
       .finally(function () { els.sgSend.disabled = false; });
+  });
+
+  /* ---------- Bulk goal import ---------- */
+  function openBulkModal() { els.bulkMsgOut.textContent = ""; els.bulkText.value = ""; els.bulkModal.classList.remove("hidden"); els.bulkText.focus(); }
+  function closeBulkModal() { els.bulkModal.classList.add("hidden"); }
+  els.openBulkAdd.addEventListener("click", openBulkModal);
+  els.bulkCancel.addEventListener("click", closeBulkModal);
+  els.bulkClose.addEventListener("click", closeBulkModal);
+  els.bulkModal.addEventListener("click", function (e) { if (e.target === els.bulkModal) closeBulkModal(); });
+  els.bulkImport.addEventListener("click", function () {
+    var rows = parseBulkGoalsText(els.bulkText.value);
+    if (!rows.length) { els.bulkMsgOut.textContent = "Escreve pelo menos um objetivo, uma linha por objetivo."; return; }
+    if (!activeSubcat) { els.bulkMsgOut.textContent = "Seleciona uma subcategoria primeiro."; return; }
+    els.bulkImport.disabled = true;
+    els.bulkMsgOut.textContent = "A importar...";
+    bulkAddGoals(activeSubcat, rows).then(function (r) {
+      els.bulkMsgOut.textContent = "Importado: " + r.created + " novo(s), " + r.attached + " associado(s) a esta subcategoria.";
+      els.bulkImport.disabled = false;
+    }).catch(function () {
+      els.bulkMsgOut.textContent = "Não foi possível importar. Verifica se algum título já existe com outra formatação.";
+      els.bulkImport.disabled = false;
+    });
   });
 
   /* ---------- Auth ---------- */
@@ -1045,6 +1061,65 @@
       renderDetail(); renderSubcats();
     }
   }
+  function parseBulkGoalsText(text) {
+    return text.split("\n").map(function (line) {
+      var parts = line.split(",");
+      var title = (parts[0] || "").trim();
+      var tag = (parts[1] || "").trim();
+      var notas = parts.slice(2).join(",").trim();
+      return { title: title, tag: tag, notas: notas };
+    }).filter(function (r) { return r.title; });
+  }
+  function bulkAddGoals(subcategoryId, rows) {
+    if (!rows.length) return Promise.resolve({ created: 0, attached: 0 });
+    var seen = {};
+    var uniqueRows = rows.filter(function (r) {
+      var key = r.title.toLowerCase();
+      if (seen[key]) return false;
+      seen[key] = true;
+      return true;
+    });
+    if (loggedIn) {
+      var toCreate = [], toAttach = [];
+      uniqueRows.forEach(function (r) {
+        var existing = findGoalByTitle(r.title);
+        if (existing) toAttach.push(existing); else toCreate.push(r);
+      });
+      var attachPromise = Promise.all(toAttach.map(function (existing) {
+        if (existing.subcategoryIds.indexOf(subcategoryId) !== -1) return Promise.resolve();
+        existing.subcategoryIds.push(subcategoryId);
+        return sb.from("site_shared_items").update({ subcategory_ids: existing.subcategoryIds }).eq("id", existing.id);
+      }));
+      var createPromise = toCreate.length ? sb.from("site_shared_items").insert(toCreate.map(function (r) {
+        return { site_id: SITE_ID, kind: "goal", subcategory_ids: [subcategoryId], tag: r.tag, title: r.title, notas: r.notas, created_by: userId };
+      })).select().then(function (res) {
+        if (res.data) res.data.forEach(function (d) {
+          goals.push({ id: d.id, subcategoryIds: d.subcategory_ids || [], tag: d.tag || "", title: d.title, notas: d.notas || "", implies: d.implies || [] });
+        });
+        return res.data ? res.data.length : 0;
+      }) : Promise.resolve(0);
+      return Promise.all([attachPromise, createPromise]).then(function (r) {
+        recomputeEffective();
+        renderDetail(); renderSubcats();
+        return { created: r[1] || 0, attached: toAttach.length };
+      });
+    } else {
+      var created = 0, attached = 0;
+      uniqueRows.forEach(function (r) {
+        var existing = findGoalByTitle(r.title);
+        if (existing) {
+          if (existing.subcategoryIds.indexOf(subcategoryId) === -1) { existing.subcategoryIds.push(subcategoryId); attached++; }
+        } else {
+          goals.push({ id: uid("g"), subcategoryIds: [subcategoryId], tag: r.tag, title: r.title, notas: r.notas, implies: [], done: false, doneAt: null });
+          created++;
+        }
+      });
+      save(K_GOALS, goals);
+      recomputeEffective();
+      renderDetail(); renderSubcats();
+      return Promise.resolve({ created: created, attached: attached });
+    }
+  }
   function attachGoalToSubcat(existing, subcategoryId) {
     if (existing.subcategoryIds.indexOf(subcategoryId) !== -1) return;
     existing.subcategoryIds.push(subcategoryId);
@@ -1330,6 +1405,6 @@
 })();
 </script>
 
-<!-- v0.11 -->
+<!-- v0.12 -->
 </body>
 </html>
