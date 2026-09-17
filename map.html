@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<title>Mapa Interativo · Achievements</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --bg:#EDE4CC; --surface:#F8F2E1; --surface-2:#F1E8D2;
+    --ink:#1B2A22; --ink-soft:#56624F; --gold:#B8862F; --gold-soft:rgba(184,134,47,0.16);
+    --rust:#9C3B2B; --line:rgba(27,42,34,0.16); --shadow:rgba(27,42,34,0.10);
+    --font-display:Georgia,'Iowan Old Style','Palatino Linotype','Book Antiqua',serif;
+    --font-body:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    --font-mono:ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  }
+  html[data-theme="dark"]{
+    --bg:#10160E; --surface:#1C2A21; --surface-2:#22322A;
+    --ink:#EDE4CC; --ink-soft:#B4AC8F; --gold:#D4A24C; --gold-soft:rgba(212,162,76,0.18);
+    --rust:#C56548; --line:rgba(237,228,204,0.14); --shadow:rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-body);-webkit-font-smoothing:antialiased;min-height:100vh;transition:background .25s ease,color .25s ease}
+  a,button{font-family:inherit}
+
+  .masthead{max-width:1040px;margin:0 auto;padding:18px 18px 0;display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px}
+  .brand h1{font-family:var(--font-display);font-weight:400;font-size:1.5rem;letter-spacing:.3px;margin:0}
+  .brand p{margin:2px 0 0;color:var(--ink-soft);font-size:.82rem}
+  .nav-row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .primary-tabs{display:flex;gap:4px;align-items:center}
+  .primary-tabs a,.primary-tabs button{background:none;border:none;padding:8px 4px;margin-right:18px;font-size:.95rem;color:var(--ink-soft);cursor:pointer;position:relative;font-family:var(--font-display);text-decoration:none}
+  .primary-tabs .active{color:var(--ink)}
+  .primary-tabs .active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--rust)}
+  .auth-divider{width:1px;height:18px;background:var(--line)}
+  .auth-btn{background:none;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:.82rem;color:var(--ink-soft);cursor:pointer}
+  .auth-btn:hover{color:var(--ink);border-color:var(--gold)}
+  .auth-btn.logged{border-color:var(--gold);color:var(--ink)}
+
+  main{max-width:1040px;margin:14px auto 0;padding:0 18px 50px;border-top:1px solid var(--line)}
+
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px 0 10px}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .seg .lbl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--ink-soft);margin-right:2px}
+  .chip-btn{font-size:.8rem;font-weight:600;cursor:pointer;background:var(--surface);color:var(--ink-soft);border:1px solid var(--line);padding:7px 12px;border-radius:999px;transition:.15s;white-space:nowrap}
+  .chip-btn:hover{border-color:var(--gold)}
+  .chip-btn[aria-pressed="true"]{background:var(--gold-soft);color:var(--ink);border-color:var(--gold);font-weight:600}
+  .divider{width:1px;height:22px;background:var(--line);margin:0 2px}
+  .count{font-size:.74rem;color:var(--ink-soft);font-family:var(--font-mono)}
+
+  .layout{display:flex;gap:14px;align-items:flex-start}
+  #map{flex:1;height:60vh;min-height:340px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);z-index:0}
+  .listpane{width:min(400px,42%);height:60vh;overflow:auto;padding-right:2px}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 12px;margin-bottom:8px;cursor:pointer;box-shadow:0 2px 8px var(--shadow);transition:border-color .15s}
+  .card:hover{border-color:var(--gold)}
+  .card.visited{opacity:.62}
+  .card h3{margin:0 0 3px;font-family:var(--font-display);font-weight:400;font-size:1.02rem;display:flex;gap:7px;align-items:baseline}
+  .num{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;background:var(--rust);color:#fff;border-radius:50%;font-size:.7rem;font-weight:700;font-family:var(--font-body);flex:none}
+  .card.visited .num{background:var(--gold)}
+  .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.78rem;color:var(--ink-soft);margin:2px 0 5px}
+  .stars{color:var(--gold);font-weight:700}
+  .badge{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:6px}
+  .badge.free{background:var(--gold-soft);color:var(--gold)}
+  .badge.paid{background:rgba(156,59,43,.14);color:var(--rust)}
+  .hours{font-size:.76rem;color:var(--ink-soft);margin:0 0 7px}
+  .hours b{color:var(--ink);font-weight:600}
+  .desc{font-size:.83rem;line-height:1.45;color:var(--ink);opacity:.92;margin:0 0 8px}
+  .actions{display:flex;gap:8px;flex-wrap:wrap}
+  .abtn{font-size:.76rem;font-weight:600;cursor:pointer;border-radius:8px;padding:7px 10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink);text-decoration:none;display:inline-flex;gap:5px;align-items:center}
+  .abtn.gm{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  html[data-theme="dark"] .abtn.gm{background:var(--gold);color:#14200F;border-color:var(--gold)}
+  .abtn.seen[aria-pressed="true"]{background:var(--gold);color:#14200F;border-color:var(--gold)}
+
+  .leaflet-popup-content-wrapper{background:var(--surface);color:var(--ink);border-radius:12px;box-shadow:0 6px 22px var(--shadow);border-top:4px solid var(--rust)}
+  .leaflet-popup-content{margin:12px 14px;width:250px!important}
+  .leaflet-popup-tip{background:var(--surface)}
+  .leaflet-popup-close-button{color:var(--ink-soft)!important}
+  .pop h3{margin:0 0 4px;font-family:var(--font-display);font-weight:400;font-size:1.08rem;line-height:1.15}
+  .pin{width:30px;height:30px;border-radius:50% 50% 50% 2px;transform:rotate(45deg);background:var(--rust);border:2px solid #fff;box-shadow:0 3px 7px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
+  .pin span{transform:rotate(-45deg);color:#fff;font:700 .72rem/1 var(--font-body)}
+  .pin.visited{background:var(--gold)}
+  .me{width:18px;height:18px;border-radius:50%;background:#1b6fe0;border:3px solid #fff;box-shadow:0 0 0 3px rgba(27,111,224,.35),0 2px 6px rgba(0,0,0,.4)}
+  .me-pulse{animation:pulse 1.8s ease-out infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(27,111,224,.45),0 2px 6px rgba(0,0,0,.4)}70%{box-shadow:0 0 0 18px rgba(27,111,224,0),0 2px 6px rgba(0,0,0,.4)}100%{box-shadow:0 0 0 0 rgba(27,111,224,0),0 2px 6px rgba(0,0,0,.4)}}
+  @media(prefers-reduced-motion:reduce){.me-pulse{animation:none}}
+
+  .settings-section{margin-bottom:26px}
+  .settings-section h2{font-family:var(--font-display);font-weight:400;font-size:1.05rem;margin:16px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  .row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+  .row:last-child{border-bottom:none}
+  .row .left{display:flex;align-items:center;gap:10px}
+  .switch{position:relative;width:42px;height:24px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;cursor:pointer;flex-shrink:0}
+  .switch .knob{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--ink-soft);transition:transform .2s ease,background .2s ease}
+  .switch.on{background:var(--gold-soft);border-color:var(--gold)}
+  .switch.on .knob{transform:translateX(18px);background:var(--gold)}
+  .account-info{font-size:.86rem;color:var(--ink-soft)}
+  .account-info strong{color:var(--ink)}
+  .version-footer{text-align:center;color:var(--ink-soft);font-size:.74rem;margin-top:24px;opacity:.75}
+
+  .overlay{position:fixed;inset:0;background:rgba(16,22,14,.55);display:none;align-items:flex-end;justify-content:center;z-index:1000}
+  .overlay.show{display:flex}
+  @media(min-width:560px){.overlay{align-items:center}}
+  .modal{background:var(--surface);width:100%;max-width:440px;border-radius:14px 14px 0 0;padding:4px 0 0;max-height:88vh;overflow:auto}
+  @media(min-width:560px){.modal{border-radius:14px}}
+  .modal h2{font-family:var(--font-display);font-weight:400;font-size:1.15rem;margin:0;padding:18px 20px 12px}
+  .field{margin:0 20px 14px}
+  .field label{display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:5px}
+  .field input{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:10px 11px;color:var(--ink);font-size:.92rem;font-family:inherit}
+  .auth-msg{font-size:.82rem;padding:4px 20px 8px;color:var(--rust)}
+  .auth-msg.info{color:var(--ink-soft)}
+  .modal-actions{display:flex;gap:10px;padding:12px 20px 18px}
+  .btn{flex:1;padding:11px;border-radius:8px;border:none;font-size:.9rem;font-weight:600;cursor:pointer}
+  .btn.primary{background:var(--ink);color:var(--bg)}
+  html[data-theme="dark"] .btn.primary{background:var(--gold);color:#14200F}
+  .btn.secondary{background:var(--surface-2);color:var(--ink)}
+  .link-btn{background:none;border:none;color:var(--ink-soft);font-size:.86rem;cursor:pointer;padding:0 20px 18px;width:100%;text-align:center}
+
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  @media(max-width:720px){
+    .layout{flex-direction:column}
+    #map{width:100%;height:52vh}
+    .listpane{width:100%;height:auto;max-height:none}
+    .primary-tabs a,.primary-tabs button{margin-right:12px}
+  }
+</style>
+</head>
+<body>
+
+<div class="masthead">
+  <div class="brand">
+    <h1>Achievements</h1>
+    <p>Mapa interativo das cidades e atrações conquistadas.</p>
+  </div>
+  <div class="nav-row">
+    <div class="primary-tabs">
+      <a href="https://achievements.frisk.pt/">Achievements</a>
+      <button id="tab-map" class="active">Mapa Interativo</button>
+      <button id="tab-settings">Definições</button>
+    </div>
+    <div class="auth-divider"></div>
+    <button class="auth-btn" id="authBtn">Entrar</button>
+  </div>
+</div>
+
+<main>
+  <section id="view-map">
+    <div class="bar">
+      <div class="seg" id="priceChips">
+        <span class="lbl">Preço</span>
+        <button class="chip-btn pf" data-price="all" aria-pressed="true">Todas</button>
+        <button class="chip-btn pf" data-price="free" aria-pressed="false">Grátis</button>
+        <button class="chip-btn pf" data-price="paid" aria-pressed="false">Pago</button>
+      </div>
+      <span class="divider"></span>
+      <button class="chip-btn" id="hideSeen" aria-pressed="false">Esconder visitadas</button>
+      <button class="chip-btn" id="fitAll">Ver tudo</button>
+      <button class="chip-btn" id="locate" aria-pressed="false">📍 A minha posição</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="layout">
+      <div id="map"></div>
+      <div class="listpane"><div id="cards"></div></div>
+    </div>
+  </section>
+
+  <section id="view-settings" style="display:none">
+    <div class="settings-section">
+      <h2>Conta</h2>
+      <div class="row"><div class="account-info" id="accountInfo">Não tens sessão iniciada — o teu progresso fica guardado só neste dispositivo.</div></div>
+    </div>
+    <div class="settings-section">
+      <h2>Aparência</h2>
+      <div class="row"><div class="left">Modo escuro</div><div class="switch" id="darkSwitch"><div class="knob"></div></div></div>
+    </div>
+    <div class="settings-section">
+      <h2>Progresso</h2>
+      <div class="row"><div class="account-info" id="progressInfo"></div></div>
+      <div class="row"><div class="left">Repor as atrações visitadas</div><button class="chip-btn" id="resetVisited">Repor</button></div>
+    </div>
+    <div class="version-footer" id="versionFooter"></div>
+  </section>
+</main>
+
+<div class="overlay" id="authOverlay">
+  <div class="modal">
+    <h2>Entrar ou criar conta</h2>
+    <div class="field"><label for="auth-email">Email</label><input type="email" id="auth-email" placeholder="tu@email.com"></div>
+    <div class="field"><label for="auth-password">Palavra-passe</label><input type="password" id="auth-password" placeholder="Pelo menos 6 caracteres"></div>
+    <div class="auth-msg" id="authMsg" style="display:none"></div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="authSignup">Criar conta</button>
+      <button class="btn primary" id="authSignin">Entrar</button>
+    </div>
+    <button class="link-btn" id="authCancel">Cancelar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var SUPABASE_URL="https://aehitgqsfcpzuunyzpsh.supabase.co";
+  var SUPABASE_ANON_KEY="sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
+  var SITE_ID="mapa-bologna";
+  var APP_VERSION="v1.0";
+  var sb=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY):null;
+
+  var K_VISITED="mapabo_visited_v1", K_THEME="mapabo_theme_v1";
+
+  var A=[
+   {id:1,n:"Santo Stefano (Sete Igrejas)",lat:44.4921725,lng:11.3484957,r:4.8,rc:2498,free:true,h:"Ter–Sáb 7:30–12:30 e 14:30–19:30 · Dom 8:30–13 e 15–19:30 · Seg fechado",d:"Labirinto de sete capelas, claustros e pátios de várias épocas sobre um antigo templo pagão a Ísis. A tradição diz que São Petrónio o concebeu no séc. V para imitar o Santo Sepulcro."},
+   {id:2,n:"Duas Torres (Asinelli & Garisenda)",lat:44.4942094,lng:11.3467312,r:4.7,rc:34217,free:false,pay:"Subida fechada",h:"Subida encerrada para obras de estabilização",d:"As torres inclinadas do séc. XII (97 m e 48 m), símbolo da cidade e últimas de mais de 100 que a nobreza medieval erguia para mostrar poder."},
+   {id:3,n:"Fonte de Neptuno",lat:44.4942969,lng:11.3426801,r:4.7,rc:6404,free:true,h:"Sempre (exterior)",d:"Fonte monumental de 1566 do flamengo Giambologna, símbolo do poder papal sobre o mundo tal como Neptuno domina os mares. O tridente inspirou o logótipo da Maserati."},
+   {id:4,n:"Santuário Madonna di San Luca",lat:44.4791156,lng:11.2980641,r:4.7,rc:13225,free:true,h:"Todos os dias 7–18",d:"Santuário barroco no alto do Colle della Guardia, com um ícone da Virgem atribuído a São Lucas. Liga-se à cidade pelo pórtico coberto mais longo do mundo (666 arcos)."},
+   {id:5,n:"Catedral de San Pietro (Duomo)",lat:44.4959254,lng:11.3429654,r:4.7,rc:5263,free:true,h:"Todos os dias ~7–18:30",d:"A verdadeira catedral de Bolonha, sede do arcebispo, muitas vezes confundida com San Petronio. Medieval, foi remodelada em barroco; conta-se que a fachada ficou sóbria para não ofuscar o Vaticano."},
+   {id:6,n:"Basílica de San Domenico",lat:44.489642,lng:11.3440336,r:4.7,rc:4426,free:true,h:"Todos os dias 7–20 (pausa ao fim de semana)",d:"Basílica do séc. XIII que guarda a Arca de São Domingos, fundador dos dominicanos, com esculturas de vários mestres, incluindo três figuras de um jovem Michelangelo."},
+   {id:7,n:"Archiginnasio",lat:44.491972,lng:11.34342,r:4.6,rc:1870,free:false,pay:"~3€ (teatro)",h:"Seg–Sáb 9–14 (pátio grátis)",d:"Antiga sede central da universidade mais antiga do mundo ocidental (1563). Paredes cobertas de brasões de estudantes e o célebre Teatro Anatómico em madeira."},
+   {id:8,n:"Giardini Margherita",lat:44.4827156,lng:11.3524117,r:4.6,rc:17853,free:true,h:"Sempre aberto",d:"O maior parque público (1879), ao estilo dos jardins ingleses. Tem lago com tartarugas, cafés e um túmulo etrusco descoberto no local."},
+   {id:9,n:"Il Quadrilatero",lat:44.4941819,lng:11.3461149,r:4.6,rc:161,free:true,h:"Ruas sempre abertas; lojas de dia",d:"A malha de ruelas do antigo mercado medieval, ainda cheia de charcutaria, massa fresca e tascas. É o coração da 'Bolonha Gorda'."},
+   {id:10,n:"Pinacoteca Nazionale",lat:44.4977566,lng:11.3534957,r:4.6,rc:4120,free:false,pay:"~6–8€",h:"Ter–Dom 9–19 · Seg fechado",d:"A grande galeria de arte, com a escola bolonhesa (os Carracci, Guido Reni) e nomes como Rafael e Giotto, no antigo noviciado jesuíta."},
+   {id:11,n:"Palazzo Re Enzo",lat:44.4945242,lng:11.3430307,r:4.6,rc:2528,free:true,h:"Só em eventos (exterior sempre visível)",d:"Palácio gótico de 1245 que deve o nome ao rei Enzo da Sardenha, aqui prisioneiro mais de 20 anos até morrer. Hoje acolhe eventos."},
+   {id:12,n:"Biblioteca Salaborsa",lat:44.4946348,lng:11.3419323,r:4.6,rc:1191,free:true,h:"Seg–Ter 14–19 · Qua–Sex 9–14 · fim de semana fechado",d:"Biblioteca no Palazzo d'Accursio, com um átrio coberto e chão de vidro sobre escavações da Bononia romana. Já foi jardim botânico e bolsa (daí 'Borsa')."},
+   {id:13,n:"Santa Maria della Vita",lat:44.4935106,lng:11.344627,r:4.6,rc:1353,free:false,pay:"~5€",h:"Todos os dias 10–18:30",d:"Santuário barroco que guarda o 'Compianto sul Cristo Morto' de Niccolò dell'Arca (séc. XV), grupo de terracota de intensidade emocional arrebatadora."},
+   {id:14,n:"Basílica de San Francesco",lat:44.4949329,lng:11.3352379,r:4.6,rc:2454,free:true,h:"Todos os dias 7–12 e 15:30–19",d:"Uma das primeiras grandes igrejas góticas de Itália (séc. XIII), com claustros tranquilos e um imponente retábulo de mármore. Guarda o túmulo do Papa Alexandre V."},
+   {id:15,n:"Basílica de San Petronio",lat:44.4933901,lng:11.3432131,r:4.5,rc:6196,free:true,h:"Todos os dias 10–18",d:"Uma das maiores igrejas do mundo, erguida pela comuna (não pela Igreja) como símbolo de poder civil desde 1390. Fachada inacabada e o maior relógio solar do mundo."},
+   {id:16,n:"Museo Civico Archeologico",lat:44.4927825,lng:11.3437045,r:4.5,rc:3861,free:false,pay:"~6€",h:"Seg e Qua–Dom 10–19 · Ter fechado",d:"Uma das melhores coleções etruscas de Itália, com secções egípcia, grega e romana, num antigo hospital do séc. XV junto à Piazza Maggiore."},
+   {id:17,n:"Museo Ducati",lat:44.5160418,lng:11.2685577,r:4.5,rc:6836,free:false,pay:"~15€",h:"Seg–Sex 9–18 · fim de semana fechado",d:"Templo da lendária marca de motos, em Borgo Panigale (arredores), com as máquinas de corrida e estrada que fizeram história no MotoGP e Superbike. Inclui fábrica."},
+   {id:18,n:"Mercato di Mezzo",lat:44.4933404,lng:11.3448481,r:4.4,rc:10027,free:true,h:"Todos os dias 9–24 (Sex/Sáb até tarde)",d:"Mercado coberto histórico no Quadrilatero, hoje um 'food hall' de dois pisos com massa fresca, pizza e vinho. Para provar a cidade sem cerimónia."},
+   {id:19,n:"Piazza Maggiore",lat:44.493945,lng:11.3432071,r:null,rc:null,free:true,h:"Sempre aberta",d:"A grande praça central desde o séc. XIII, rodeada pelos palácios do poder civil e religioso. É o palco da vida bolonhesa e o ponto de partida natural."},
+   {id:20,n:"Portico di San Luca",lat:44.4862896,lng:11.3031554,r:null,rc:null,free:true,h:"Sempre aberto (percurso)",d:"O pórtico coberto mais longo do mundo (~3,8 km, 666 arcos), do séc. XVIII, para abrigar a procissão anual do ícone da Virgem. Sobe do centro ao santuário."},
+   {id:21,n:"Torre Prendiparte (Coronata)",lat:44.4960091,lng:11.3447661,r:4.7,rc:32,free:false,pay:"~5€",h:"Só ao domingo (com reserva)",d:"A segunda torre mais alta da cidade (60 m), do séc. XII, apelidada 'Coronata' pelas ameias no topo. Sobe-se ao terraço para uma vista a 360° com a Asinelli em plano."},
+   {id:22,n:"MAMbo · Arte Moderna",lat:44.5027243,lng:11.3365769,r:4.2,rc:4904,free:false,pay:"~6–10€",h:"Ter–Qua 14–19 · Qui 14–20 · Sex–Dom 10–19 · Seg fechado",d:"O museu de arte moderna e contemporânea, com a coleção do bolonhês Giorgio Morandi e nomes como Keith Haring, num antigo forno municipal de pão."},
+   {id:23,n:"Museo di Palazzo Poggi",lat:44.4968777,lng:11.3524089,r:4.7,rc:614,free:false,pay:"~10€",h:"Ter–Sex 10–16 · Dom 10–18 · Seg/Sáb fechado",d:"O museu da universidade: um gabinete de curiosidades do séc. XVIII com ceras anatómicas, modelos de navios, mapas e instrumentos científicos. Pouco concorrido."},
+   {id:24,n:"Finestrella di Via Piella",lat:44.4985895,lng:11.3451942,r:4.2,rc:2750,free:true,h:"Sempre (rua)",d:"Uma janelinha num muro que revela um canal escondido — memória da Bolonha medieval, cruzada por canais que moviam moinhos e teares. O recanto mais fotografado."},
+   {id:25,n:"Basílica de San Giacomo Maggiore",lat:44.4955073,lng:11.3489789,r:4.5,rc:709,free:true,h:"Todos os dias ~7:30–12:30 e 15:30–18",d:"Igreja agostiniana de 1267, gótica por fora e renascentista por dentro, com a deslumbrante Capela Bentivoglio da família que governou Bolonha no séc. XV."},
+   {id:26,n:"Collezioni Comunali d'Arte",lat:44.4939611,lng:11.3424071,r:4.5,rc:299,free:false,pay:"~6€",h:"Ter/Qui 14–19 · Qua/Sex–Dom 10–19 · Seg fechado",d:"A coleção de arte da cidade no Palazzo d'Accursio (câmara municipal), com salas históricas decoradas, obras de Artemisia Gentileschi e uma maqueta da Bolonha antiga."},
+   {id:27,n:"Mercato delle Erbe",lat:44.4961808,lng:11.3383295,r:4.3,rc:14423,free:true,h:"Seg–Sáb 7–19:30 · Dom fechado",d:"O maior mercado coberto (1910), meio mercado de bairro, meio 'food hall'. Menos turístico que o Quadrilatero e ótimo para comer entre locais."},
+   {id:28,n:"Santa Maria dei Servi",lat:44.49188,lng:11.3521429,r:4.6,rc:1951,free:true,h:"Ter–Dom 8:30–12 e 16–18 · Seg fechado",d:"Basílica gótica de 1346 na Strada Maggiore, precedida por um raro pórtico-átrio de quatro lados. Guarda uma Maestà de Cimabue."},
+   {id:29,n:"Belvedere di San Michele in Bosco",lat:44.4823916,lng:11.3420182,r:4.8,rc:137,free:true,h:"Sempre aberto",d:"O melhor miradouro sobre Bolonha, a ~20 min a pé do centro, com toda a cidade e as suas torres aos teus pés. Grátis e sem multidões."},
+   {id:30,n:"Corte Isolani / Casa Isolani",lat:44.492505,lng:11.348338,r:4.4,rc:655,free:true,h:"Passagem 12–23",d:"Passagem medieval entre a Strada Maggiore e Santo Stefano. Repara no pórtico de carvalho de 9 m (séc. XIII) e nas três flechas cravadas no teto, envoltas em lenda."},
+   {id:31,n:"Oratorio di Santa Cecilia",lat:44.495967,lng:11.350004,r:4.6,rc:396,free:true,h:"Seg–Sex 14–18 · Sáb–Dom 10–13",d:"Pequeno oratório com um ciclo de frescos do Renascimento de Lorenzo Costa e Francesco Francia, em excelente estado. Entrada gratuita — joia escondida."},
+   {id:32,n:"Museo Civico Medievale",lat:44.4964798,lng:11.3420796,r:4.4,rc:1282,free:false,pay:"~6€",h:"Ter/Qui 10–14 · Qua/Sex 14–19 · Sáb–Dom 10–19 · Seg fechado",d:"No belo Palazzo Ghisilardi-Fava, reúne a Bolonha medieval no seu auge de centro de saber: túmulos esculpidos de professores, manuscritos, armaduras e marfins."},
+   {id:33,n:"Torre dell'Orologio",lat:44.493706,lng:11.3422264,r:4.7,rc:893,free:false,pay:"bilhete",h:"Todos os dias 10–20 (com reserva)",d:"A torre do relógio do Palazzo d'Accursio, na Piazza Maggiore, com vista soberba sobre a praça. A subida final é por escadas de madeira íngremes."},
+   {id:34,n:"Museo della Musica",lat:44.4928474,lng:11.3502958,r:4.5,rc:1342,free:true,h:"Ter–Sex 11–13:30 e 14:30–18:30 · Sáb–Dom 10–19 · Seg fechado",d:"Num palácio com frescos, guarda instrumentos antigos, partituras e retratos — incluindo o manuscrito do 'Barbeiro de Sevilha' de Rossini. Coleção permanente gratuita."},
+   {id:35,n:"Certosa di Bologna",lat:44.4978269,lng:11.3070901,r:4.6,rc:1794,free:true,h:"Todos os dias 8–18",d:"Antiga cartuxa transformada em cemitério monumental em 1801, admirada por Byron. Um museu ao ar livre de escultura, sobre uma necrópole etrusca. A caminho de San Luca."},
+   {id:36,n:"Osteria del Sole",lat:44.4938786,lng:11.3443399,r:4.6,rc:2465,free:true,h:"Taverna histórica (1465) — confirma o horário no local",d:"A taverna mais antiga de Bolonha, aberta desde 1465. Só serve vinho — a comida trá-la o cliente. Escondida num beco do Quadrilatero, é pura tradição."},
+   {id:37,n:"San Bartolomeo e Gaetano",lat:44.4940002,lng:11.3471644,r:4.7,rc:524,free:true,h:"Todos os dias 7:30–13 e 15:30–19:30",d:"Igreja barroca junto às Duas Torres, com tetos pintados, colunas coríntias e uma Madona de Guido Reni. Fácil de perder entre a azáfama."},
+   {id:38,n:"Villa Ghigi",lat:44.4767909,lng:11.3266866,r:4.7,rc:2267,free:true,h:"Sempre aberto",d:"Um grande parque campestre logo a sul das muralhas, com pomares, vinhas e trilhos, e vistas sobre a cidade. Entrada por Porta San Mamolo."},
+  ];
+  var byId={}; A.forEach(function(p){byId[p.id]=p;});
+
+  var visited=new Set(); try{var sv=localStorage.getItem(K_VISITED);if(sv)visited=new Set(JSON.parse(sv));}catch(e){}
+  var theme="light"; try{theme=localStorage.getItem(K_THEME)||"light";}catch(e){}
+  var priceF="all", hideSeen=false;
+  var loggedIn=false,userId=null,userEmail=null;
+  document.documentElement.setAttribute("data-theme",theme);
+
+  function saveLocalVisited(){try{localStorage.setItem(K_VISITED,JSON.stringify([...visited]));}catch(e){}}
+  function saveLocalTheme(){try{localStorage.setItem(K_THEME,theme);}catch(e){}}
+
+  async function cloudGet(chave){
+    if(!sb||!loggedIn) return null;
+    var res=await sb.from("user_site_data").select("valor").eq("site_id",SITE_ID).eq("chave",chave).maybeSingle();
+    return res.data?res.data.valor:null;
+  }
+  async function cloudSet(chave,valor){
+    if(!sb||!loggedIn) return;
+    await sb.from("user_site_data").upsert({user_id:userId,site_id:SITE_ID,chave:chave,valor:valor,updated_at:new Date().toISOString()},{onConflict:"user_id,site_id,chave"});
+  }
+  function saveVisited(){ if(loggedIn) cloudSet("visitados",[...visited]); else saveLocalVisited(); }
+  function saveTheme(){ if(loggedIn) cloudSet("definicoes",{theme:theme}); else saveLocalTheme(); }
+
+  var els={
+    authBtn:document.getElementById("authBtn"),accountInfo:document.getElementById("accountInfo"),
+    authOverlay:document.getElementById("authOverlay"),authEmail:document.getElementById("auth-email"),
+    authPassword:document.getElementById("auth-password"),authMsg:document.getElementById("authMsg"),
+    authSignin:document.getElementById("authSignin"),authSignup:document.getElementById("authSignup"),authCancel:document.getElementById("authCancel"),
+    tabMap:document.getElementById("tab-map"),tabSettings:document.getElementById("tab-settings"),
+    viewMap:document.getElementById("view-map"),viewSettings:document.getElementById("view-settings"),
+    darkSwitch:document.getElementById("darkSwitch"),versionFooter:document.getElementById("versionFooter"),
+    progressInfo:document.getElementById("progressInfo"),resetVisited:document.getElementById("resetVisited")
+  };
+  function renderAuth(){
+    els.authBtn.textContent=loggedIn?"Sair":"Entrar";
+    els.authBtn.classList.toggle("logged",loggedIn);
+    els.accountInfo.innerHTML=loggedIn
+      ? "Sessão iniciada como <strong>"+userEmail+"</strong>. O teu progresso é guardado na tua conta e segue-te em qualquer dispositivo."
+      : "Não tens sessão iniciada — o teu progresso fica guardado só neste dispositivo.";
+  }
+  function showAuthMsg(t,info){els.authMsg.textContent=t;els.authMsg.className="auth-msg"+(info?" info":"");els.authMsg.style.display="";}
+  function openAuth(){els.authEmail.value="";els.authPassword.value="";els.authMsg.style.display="none";els.authOverlay.classList.add("show");els.authEmail.focus();}
+  function closeAuth(){els.authOverlay.classList.remove("show");}
+  els.authCancel.addEventListener("click",closeAuth);
+  els.authOverlay.addEventListener("click",function(e){if(e.target===els.authOverlay)closeAuth();});
+  els.authBtn.addEventListener("click",function(){
+    if(!sb){alert("Serviço indisponível offline.");return;}
+    if(loggedIn){sb.auth.signOut().then(function(){location.reload();});}
+    else openAuth();
+  });
+  els.authSignin.addEventListener("click",function(){
+    var e=els.authEmail.value.trim(),p=els.authPassword.value;
+    if(!e||!p){showAuthMsg("Preenche o email e a palavra-passe.");return;}
+    sb.auth.signInWithPassword({email:e,password:p}).then(function(r){if(r.error){showAuthMsg(r.error.message);return;}closeAuth();});
+  });
+  els.authSignup.addEventListener("click",function(){
+    var e=els.authEmail.value.trim(),p=els.authPassword.value;
+    if(!e||!p){showAuthMsg("Preenche o email e a palavra-passe.");return;}
+    if(p.length<6){showAuthMsg("A palavra-passe precisa de pelo menos 6 caracteres.");return;}
+    sb.auth.signUp({email:e,password:p}).then(function(r){
+      if(r.error){showAuthMsg(r.error.message);return;}
+      if(r.data&&r.data.session)closeAuth();
+      else showAuthMsg("Conta criada. Confirma o email antes de entrares.",true);
+    });
+  });
+
+  async function onLogin(session){
+    loggedIn=true;userId=session.user.id;userEmail=session.user.email;
+    var cloud=await cloudGet("visitados");
+    var cset=new Set(Array.isArray(cloud)?cloud:[]);
+    var localOnly=[...visited].filter(function(x){return !cset.has(x);});
+    localOnly.forEach(function(x){cset.add(x);});
+    visited=cset;
+    if(localOnly.length) await cloudSet("visitados",[...visited]);
+    var def=await cloudGet("definicoes");
+    if(def&&def.theme){theme=def.theme;document.documentElement.setAttribute("data-theme",theme);}
+    renderAuth();refreshMarkers();renderList();renderSettings();
+  }
+  function onLogout(){loggedIn=false;userId=null;userEmail=null;renderAuth();renderSettings();}
+  if(sb){
+    sb.auth.onAuthStateChange(function(_e,session){ if(session&&session.user)onLogin(session); else onLogout(); });
+    sb.auth.getSession().then(function(r){ if(r.data.session)onLogin(r.data.session); else renderAuth(); });
+  } else { renderAuth(); }
+
+  function switchTab(t){
+    els.tabMap.classList.toggle("active",t==="map");
+    els.tabSettings.classList.toggle("active",t==="settings");
+    els.viewMap.style.display=t==="map"?"":"none";
+    els.viewSettings.style.display=t==="settings"?"":"none";
+    if(t==="settings")renderSettings();
+    if(t==="map")setTimeout(function(){map.invalidateSize();},60);
+  }
+  els.tabMap.addEventListener("click",function(){switchTab("map");});
+  els.tabSettings.addEventListener("click",function(){switchTab("settings");});
+
+  var map=L.map('map',{zoomControl:true}).setView([44.4936,11.343],15);
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',{maxZoom:20,subdomains:'abcd',attribution:'© OpenStreetMap · © CARTO'}).addTo(map);
+  var markers={};
+  function gmaps(p){return "https://www.google.com/maps/search/?api=1&query="+p.lat+"%2C"+p.lng;}
+  function starStr(p){return p.r?("★ "+p.r.toFixed(1)+" · "+p.rc.toLocaleString('pt-PT')):"— sem nota";}
+  function badge(p){return p.free?'<span class="badge free">Grátis</span>':'<span class="badge paid">Pago'+(p.pay?" · "+p.pay:"")+'</span>';}
+  function passPrice(p){return priceF==="all"||(priceF==="free"&&p.free)||(priceF==="paid"&&!p.free);}
+  function makeIcon(p){var seen=visited.has(p.id);
+    return L.divIcon({className:'',iconSize:[30,30],iconAnchor:[15,28],popupAnchor:[0,-26],html:'<div class="pin '+(seen?'visited':'')+'"><span>'+p.id+'</span></div>'});}
+  function popupHtml(p){var seen=visited.has(p.id);
+    return '<div class="pop"><h3>'+p.n+'</h3>'+
+      '<div class="meta"><span class="stars">'+starStr(p)+'</span> '+badge(p)+'</div>'+
+      (p.h?'<div class="hours">🕑 <b>'+p.h+'</b></div>':'')+
+      '<p class="desc">'+p.d+'</p>'+
+      '<div class="actions"><a class="abtn gm" href="'+gmaps(p)+'" target="_blank" rel="noopener">📍 Google Maps</a>'+
+      '<button class="abtn seen" data-seen="'+p.id+'" aria-pressed="'+seen+'">'+(seen?'✓ Visitada':'Marcar visitada')+'</button></div></div>';}
+  function addMarkers(){A.forEach(function(p){var m=L.marker([p.lat,p.lng],{icon:makeIcon(p)}).bindPopup(popupHtml(p));m.on('popupopen',wireSeen);markers[p.id]=m;});}
+  function refreshMarkers(){A.forEach(function(p){
+    var show=passPrice(p)&&!(hideSeen&&visited.has(p.id)),m=markers[p.id];
+    if(show){m.setIcon(makeIcon(p));if(!map.hasLayer(m))m.addTo(map);}
+    else if(map.hasLayer(m))map.removeLayer(m);});}
+
+  var cardsEl=document.getElementById("cards");
+  function renderList(){
+    var items=A.slice().sort(function(a,b){return (b.r||0)-(a.r||0);}).filter(passPrice);
+    if(hideSeen)items=items.filter(function(p){return !visited.has(p.id);});
+    cardsEl.innerHTML=items.map(function(p){var seen=visited.has(p.id);
+      return '<div class="card '+(seen?'visited':'')+'" data-focus="'+p.id+'">'+
+        '<h3><span class="num">'+p.id+'</span> '+p.n+'</h3>'+
+        '<div class="meta"><span class="stars">'+starStr(p)+'</span> '+badge(p)+'</div>'+
+        (p.h?'<div class="hours">🕑 <b>'+p.h+'</b></div>':'')+
+        '<p class="desc">'+p.d+'</p>'+
+        '<div class="actions"><a class="abtn gm" href="'+gmaps(p)+'" target="_blank" rel="noopener">📍 Google Maps</a>'+
+        '<button class="abtn seen" data-seen="'+p.id+'" aria-pressed="'+seen+'">'+(seen?'✓ Visitada':'Marcar visitada')+'</button></div></div>';
+    }).join("");
+    wireCards();
+    document.getElementById("count").textContent=[...visited].length+"/"+A.length+" visitadas · "+items.length+" à mostra";
+  }
+  function wireCards(){cardsEl.querySelectorAll(".card").forEach(function(c){c.addEventListener("click",function(e){
+    if(e.target.closest(".abtn"))return;var id=+c.dataset.focus,p=byId[id];
+    if(!map.hasLayer(markers[id]))markers[id].addTo(map);
+    map.setView([p.lat,p.lng],16);markers[id].openPopup();
+    if(window.innerWidth<=720)document.getElementById("map").scrollIntoView({behavior:"smooth"});});});wireSeen();}
+  function wireSeen(){document.querySelectorAll("[data-seen]").forEach(function(b){if(b._w)return;b._w=1;
+    b.addEventListener("click",function(e){e.stopPropagation();var id=+b.dataset.seen;
+      if(visited.has(id))visited.delete(id);else visited.add(id);
+      saveVisited();refreshMarkers();renderList();renderSettings();
+      if(markers[id].isPopupOpen())markers[id].setPopupContent(popupHtml(byId[id]));});});}
+
+  document.getElementById("priceChips").addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;
+    document.querySelectorAll("#priceChips .pf").forEach(function(c){c.setAttribute("aria-pressed","false");});
+    b.setAttribute("aria-pressed","true");priceF=b.dataset.price;refreshMarkers();renderList();});
+  document.getElementById("hideSeen").addEventListener("click",function(e){hideSeen=!hideSeen;e.currentTarget.setAttribute("aria-pressed",hideSeen);refreshMarkers();renderList();});
+  document.getElementById("fitAll").addEventListener("click",function(){map.fitBounds(L.latLngBounds(A.map(function(p){return [p.lat,p.lng];})).pad(0.12));});
+
+  var watchId=null,meMarker=null,meCircle=null,firstFix=true;
+  var locBtn=document.getElementById("locate");
+  function meIcon(){return L.divIcon({className:'',iconSize:[18,18],iconAnchor:[9,9],html:'<div class="me me-pulse"></div>'});}
+  function startLoc(){
+    if(!('geolocation' in navigator)){alert("Este dispositivo não permite localização no browser.");return;}
+    locBtn.textContent="📍 A localizar…";firstFix=true;
+    watchId=navigator.geolocation.watchPosition(function(pos){
+      var la=pos.coords.latitude,lo=pos.coords.longitude,ac=pos.coords.accuracy,ll=[la,lo];
+      if(!meMarker)meMarker=L.marker(ll,{icon:meIcon(),zIndexOffset:1000}).addTo(map).bindPopup("Estás aqui");else meMarker.setLatLng(ll);
+      if(!meCircle)meCircle=L.circle(ll,{radius:ac,color:'#1b6fe0',weight:1,fillColor:'#1b6fe0',fillOpacity:.12}).addTo(map);else{meCircle.setLatLng(ll);meCircle.setRadius(ac);}
+      locBtn.setAttribute("aria-pressed","true");locBtn.textContent="📍 A seguir-te";
+      if(firstFix){map.setView(ll,16);firstFix=false;}
+    },function(err){
+      stopLoc();var m={1:"Permissão negada. Ativa a localização para este site nas definições do browser.",2:"Posição indisponível.",3:"Demorou demasiado. Tenta de novo."};
+      alert(m[err.code]||"Não foi possível obter a localização.");
+    },{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+  }
+  function stopLoc(){if(watchId!=null){navigator.geolocation.clearWatch(watchId);watchId=null;}
+    if(meMarker){map.removeLayer(meMarker);meMarker=null;}if(meCircle){map.removeLayer(meCircle);meCircle=null;}
+    locBtn.setAttribute("aria-pressed","false");locBtn.textContent="📍 A minha posição";}
+  locBtn.addEventListener("click",function(){watchId==null?startLoc():(meMarker&&map.setView(meMarker.getLatLng(),16));});
+  locBtn.addEventListener("dblclick",stopLoc);
+
+  function renderSettings(){
+    els.darkSwitch.classList.toggle("on",theme==="dark");
+    var done=[...visited].length;
+    els.progressInfo.innerHTML="Já marcaste <strong>"+done+"</strong> de "+A.length+" atrações como visitadas.";
+  }
+  els.darkSwitch.addEventListener("click",function(){
+    theme=theme==="dark"?"light":"dark";
+    document.documentElement.setAttribute("data-theme",theme);
+    els.darkSwitch.classList.toggle("on",theme==="dark");
+    saveTheme();
+  });
+  els.resetVisited.addEventListener("click",function(){
+    if(!window.confirm("Repor todas as atrações como não visitadas?"))return;
+    visited=new Set();saveVisited();refreshMarkers();renderList();renderSettings();
+  });
+
+  els.versionFooter.textContent="Mapa Interativo · Bologna · "+APP_VERSION;
+  addMarkers();refreshMarkers();renderList();renderSettings();
+  setTimeout(function(){map.invalidateSize();},300);
+})();
+</script>
+</body>
+</html>
