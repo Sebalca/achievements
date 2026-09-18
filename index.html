@@ -61,6 +61,7 @@
   .icon-btn { background: none; border: none; color: var(--ink-soft); font-size: 0.9rem; cursor: pointer; opacity: 0.6; padding: 2px 4px; }
   .icon-btn:hover { opacity: 1; }
   .icon-btn.danger:hover { color: var(--rust); }
+  .icon-btn.shared { color: var(--gold); opacity: 1; }
   .bar { height: 7px; background: var(--surface-2); border-radius: 999px; overflow: hidden; margin-bottom: 7px; }
   .bar .fill { height: 100%; background: linear-gradient(90deg, var(--gold-soft), var(--gold)); }
   .subcat-card .count { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.04em; color: var(--ink-soft); }
@@ -91,6 +92,11 @@
   .goal-actions { display: flex; gap: 2px; }
   .goal-actions .icon-btn { opacity: 0.65; font-size: 0.82rem; }
 
+  .detail-filters { display: flex; gap: 8px; margin: 10px 0 14px; }
+  .detail-filters select {
+    background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
+    padding: 6px 8px; color: var(--ink); font-size: 0.82rem; font-family: inherit;
+  }
   .settings-section { margin-bottom: 28px; }
   .settings-section h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; margin: 14px 0 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
   .row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 0.92rem; }
@@ -119,7 +125,7 @@
   .modal > p, .modal > .onboarding-list, .modal > .field, .modal > .auth-msg { padding-left: 20px; padding-right: 20px; }
   .field { margin-bottom: 14px; position: relative; }
   .field label { display: block; font-size: 0.8rem; color: var(--ink-soft); margin-bottom: 5px; }
-  .field input[type=text], .field input[type=email], .field input[type=password], .field select, .field textarea {
+  .field input[type=text], .field input[type=email], .field input[type=password], .field input[type=date], .field select, .field textarea {
     width: 100%; background: var(--surface-2); border: 1px solid var(--line); border-radius: 8px;
     padding: 10px 11px; color: var(--ink); font-size: 0.92rem; font-family: inherit;
   }
@@ -222,6 +228,18 @@
         <div class="bar"><div class="fill" id="detailFill"></div></div>
         <div class="label" id="detailLabel"></div>
       </div>
+      <div class="detail-filters">
+        <select id="detailFilter">
+          <option value="all">Todos</option>
+          <option value="done">Feitos</option>
+          <option value="pending">Não feitos</option>
+        </select>
+        <select id="detailSort">
+          <option value="none">Ordem padrão</option>
+          <option value="name">Nome (A-Z)</option>
+          <option value="tag">Etiqueta (A-Z)</option>
+        </select>
+      </div>
       <div id="goalList" class="goal-list"></div>
     </div>
   </section>
@@ -230,6 +248,22 @@
     <div class="settings-section">
       <h2>Conta</h2>
       <div class="row"><div class="account-info" id="accountInfo">Não tens sessão iniciada — os dados ficam guardados só neste dispositivo.</div></div>
+    </div>
+    <div class="settings-section" id="profileSection" style="display:none">
+      <h2>Perfil</h2>
+      <div class="field"><label for="f-prof-nome">Nome</label><input type="text" id="f-prof-nome" placeholder="O teu nome"></div>
+      <div class="field"><label for="f-prof-nasc">Data de nascimento</label><input type="date" id="f-prof-nasc"></div>
+      <div class="field"><label for="f-prof-sexo">Sexo</label>
+        <select id="f-prof-sexo">
+          <option value="">Prefiro não dizer</option>
+          <option value="feminino">Feminino</option>
+          <option value="masculino">Masculino</option>
+          <option value="outro">Outro</option>
+        </select>
+      </div>
+      <div class="field"><label for="f-prof-avatar">Foto de perfil (URL, opcional)</label><input type="text" id="f-prof-avatar" placeholder="https://..."></div>
+      <button class="add-btn" id="saveProfile" style="width:100%">Guardar perfil</button>
+      <div class="msg" id="profileMsg" style="font-size:0.8rem;color:var(--ink-soft);margin-top:8px"></div>
     </div>
     <div class="settings-section">
       <h2>Aparência</h2>
@@ -370,7 +404,7 @@
 
   var SUPABASE_URL = "https://aehitgqsfcpzuunyzpsh.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_UezgSImwgpd_EDfi02YC_w_6sqkD2Qc";
-  var APP_VERSION = "v0.12";
+  var APP_VERSION = "v0.13";
   var SITE_ID = "achievements";
   var sb = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
@@ -382,7 +416,11 @@
   var K_GOALS = "ach_goals_v4";
   var K_THEME = "ach_theme_v1";
   var K_ACTIVE_CAT = "ach_active_cat_v2";
+  var K_ACTIVE_SUBCAT = "ach_active_subcat_v1";
+  var K_ACH_VIEW = "ach_view_v1";
   var K_COMPLETIONS = "ach_completions_v2";
+  var K_SORT = "ach_sort_v1";
+  var K_FILTER = "ach_filter_v1";
 
   var MONTHS = ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"];
   function formatDate(iso) {
@@ -469,9 +507,30 @@
 
   document.documentElement.setAttribute("data-theme", theme);
 
-  var achView = "subcats";
-  var activeSubcat = null;
+  var achView = load(K_ACH_VIEW, "subcats");
+  var activeSubcat = load(K_ACTIVE_SUBCAT, null);
   var modalMode = "subcat";
+  var sharedSubcatIds = {};
+  var myProfile = {};
+  var detailFilter = load(K_FILTER, "all");
+  var detailSort = load(K_SORT, "none");
+
+  function persistNav() { save(K_ACTIVE_CAT, activeCat); save(K_ACTIVE_SUBCAT, activeSubcat); save(K_ACH_VIEW, achView); }
+  function validateNav() {
+    if (activeSubcat) {
+      var s = null;
+      for (var i = 0; i < subcats.length; i++) if (subcats[i].id === activeSubcat) s = subcats[i];
+      if (s) { activeCat = s.categoryId; achView = "detail"; }
+      else { activeSubcat = null; achView = "subcats"; }
+    } else if (achView === "detail") {
+      achView = "subcats";
+    }
+    var visible = categories.filter(function (c) { return c.enabled; });
+    if (!visible.some(function (c) { return c.id === activeCat; })) {
+      activeCat = visible.length ? visible[0].id : (categories[0] ? categories[0].id : null);
+    }
+    persistNav();
+  }
 
   var els = {
     tabAch: document.getElementById("tab-ach"), tabMap: document.getElementById("tab-map"), tabSettings: document.getElementById("tab-settings"),
@@ -505,7 +564,11 @@
     sgMsg: document.getElementById("sgMsg"), sgName: document.getElementById("sgName"), sgEmail: document.getElementById("sgEmail"),
     sgSend: document.getElementById("sgSend"), sgCancel: document.getElementById("sgCancel"), sgClose: document.getElementById("sgClose"), sgMsgOut: document.getElementById("sgMsgOut"),
     openBulkAdd: document.getElementById("openBulkAdd"), bulkModal: document.getElementById("bulkModal"), bulkText: document.getElementById("bulkText"),
-    bulkImport: document.getElementById("bulkImport"), bulkCancel: document.getElementById("bulkCancel"), bulkClose: document.getElementById("bulkClose"), bulkMsgOut: document.getElementById("bulkMsgOut")
+    bulkImport: document.getElementById("bulkImport"), bulkCancel: document.getElementById("bulkCancel"), bulkClose: document.getElementById("bulkClose"), bulkMsgOut: document.getElementById("bulkMsgOut"),
+    profileSection: document.getElementById("profileSection"), fProfNome: document.getElementById("f-prof-nome"),
+    fProfNasc: document.getElementById("f-prof-nasc"), fProfSexo: document.getElementById("f-prof-sexo"),
+    fProfAvatar: document.getElementById("f-prof-avatar"), saveProfile: document.getElementById("saveProfile"), profileMsg: document.getElementById("profileMsg"),
+    detailFilter: document.getElementById("detailFilter"), detailSort: document.getElementById("detailSort")
   };
 
   function uid(prefix) { return prefix + "-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
@@ -677,7 +740,8 @@
     if (session && session.user) {
       loggedIn = true; userId = session.user.id; userEmail = session.user.email;
       loadCloudData().then(function (needsOnboarding) {
-        renderAuth(); renderCategoryStrip(); achView = "subcats"; renderAchView();
+        validateNav();
+        renderAuth(); renderCategoryStrip(); renderAchView();
         subscribeRealtime();
         if (needsOnboarding) openOnboarding();
       });
@@ -708,6 +772,8 @@
       await sb.from("subcategory_shares").update({ status: "accepted", invited_user_id: userId }).eq("status", "pending").ilike("invited_email", userEmail);
     }
 
+    await loadSharesSummary();
+
     var compRes = await sb.from("goal_completions").select("goal_id,user_id,done_at");
     allCompletions = compRes.data || [];
     rebuildCompletionMaps();
@@ -722,10 +788,19 @@
     }
     document.documentElement.setAttribute("data-theme", theme);
 
-    var profRes = await sb.from("profiles").select("is_admin").eq("id", userId).maybeSingle();
+    var profRes = await sb.from("profiles").select("is_admin,nome,data_nascimento,sexo,avatar_url").eq("id", userId).maybeSingle();
     isAdmin = !!(profRes.data && profRes.data.is_admin);
+    myProfile = profRes.data || {};
 
     return needsOnboarding;
+  }
+
+  function loadSharesSummary() {
+    if (!loggedIn) { sharedSubcatIds = {}; return Promise.resolve(); }
+    return sb.from("subcategory_shares").select("subcategory_id").then(function (res) {
+      sharedSubcatIds = {};
+      (res.data || []).forEach(function (r) { sharedSubcatIds[r.subcategory_id] = true; });
+    });
   }
 
   if (sb) {
@@ -771,7 +846,7 @@
     var visible = categories.filter(function (c) { return c.enabled; });
     if (!visible.some(function (c) { return c.id === activeCat; })) {
       activeCat = visible.length ? visible[0].id : null;
-      if (!loggedIn) save(K_ACTIVE_CAT, activeCat);
+      persistNav();
     }
     els.categoryStrip.innerHTML = "";
     visible.forEach(function (c) {
@@ -780,8 +855,9 @@
       btn.innerHTML = '<span class="ico">' + c.icon + '</span><span>' + c.name + '</span>';
       btn.addEventListener("click", function () {
         activeCat = c.id;
-        if (!loggedIn) save(K_ACTIVE_CAT, activeCat);
         achView = "subcats";
+        activeSubcat = null;
+        persistNav();
         renderCategoryStrip();
         renderAchView();
       });
@@ -814,14 +890,15 @@
 
       var card = document.createElement("div");
       card.className = "subcat-card";
-      card.addEventListener("click", function (e) { if (e.target.closest(".card-actions")) return; activeSubcat = s.id; achView = "detail"; renderAchView(); });
+      card.addEventListener("click", function (e) { if (e.target.closest(".card-actions")) return; activeSubcat = s.id; achView = "detail"; persistNav(); renderAchView(); });
 
       var actions = document.createElement("div");
       actions.className = "card-actions";
       if (loggedIn) {
         var shareBtn = document.createElement("button");
-        shareBtn.className = "icon-btn";
-        shareBtn.setAttribute("aria-label", "Partilhar subcategoria");
+        shareBtn.className = "icon-btn" + (sharedSubcatIds[s.id] ? " shared" : "");
+        shareBtn.setAttribute("aria-label", sharedSubcatIds[s.id] ? "Subcategoria partilhada" : "Partilhar subcategoria");
+        shareBtn.title = sharedSubcatIds[s.id] ? "Subcategoria partilhada" : "Partilhar subcategoria";
         shareBtn.textContent = "\ud83d\udc65";
         shareBtn.addEventListener("click", function () { openShareModal(s); });
         actions.appendChild(shareBtn);
@@ -867,7 +944,7 @@
   function renderDetail() {
     var s = null;
     for (var i = 0; i < subcats.length; i++) if (subcats[i].id === activeSubcat) s = subcats[i];
-    if (!s) { achView = "subcats"; renderAchView(); return; }
+    if (!s) { achView = "subcats"; activeSubcat = null; persistNav(); renderAchView(); return; }
 
     els.subcatHeading.textContent = s.icon + "  " + s.name;
     var gl = goalsForSubcat(s.id);
@@ -877,6 +954,20 @@
     els.detailFill.style.width = pct + "%";
     els.detailLabel.textContent = done + " de " + total + " objetivos concluídos";
 
+    els.detailFilter.value = detailFilter;
+    els.detailSort.value = detailSort;
+
+    var visibleGoals = gl.filter(function (it) {
+      if (detailFilter === "done") return isGoalDone(it);
+      if (detailFilter === "pending") return !isGoalDone(it);
+      return true;
+    });
+    if (detailSort === "name") {
+      visibleGoals = visibleGoals.slice().sort(function (a, b) { return a.title.localeCompare(b.title, "pt"); });
+    } else if (detailSort === "tag") {
+      visibleGoals = visibleGoals.slice().sort(function (a, b) { return (a.tag || "").localeCompare(b.tag || "", "pt") || a.title.localeCompare(b.title, "pt"); });
+    }
+
     els.goalList.innerHTML = "";
     if (gl.length === 0) {
       var empty = document.createElement("div");
@@ -885,7 +976,14 @@
       els.goalList.appendChild(empty);
       return;
     }
-    gl.forEach(function (it) {
+    if (visibleGoals.length === 0) {
+      var emptyF = document.createElement("div");
+      emptyF.className = "empty";
+      emptyF.innerHTML = "<p>Nenhum objetivo corresponde a este filtro.</p>";
+      els.goalList.appendChild(emptyF);
+      return;
+    }
+    visibleGoals.forEach(function (it) {
       var effDone = isGoalDone(it);
       var row = document.createElement("div");
       row.className = "goal-item" + (effDone ? " done" : "");
@@ -973,7 +1071,9 @@
     });
   }
 
-  els.backToSubcats.addEventListener("click", function () { achView = "subcats"; renderAchView(); });
+  els.backToSubcats.addEventListener("click", function () { achView = "subcats"; activeSubcat = null; persistNav(); renderAchView(); });
+  els.detailFilter.addEventListener("change", function () { detailFilter = els.detailFilter.value; save(K_FILTER, detailFilter); renderDetail(); });
+  els.detailSort.addEventListener("change", function () { detailSort = els.detailSort.value; save(K_SORT, detailSort); renderDetail(); });
 
   /* ---------- Share subcategory (live shared progress) ---------- */
   var sharingSubcat = null;
@@ -1007,7 +1107,10 @@
           xBtn.type = "button";
           xBtn.textContent = "\u00d7";
           xBtn.addEventListener("click", function () {
-            sb.from("subcategory_shares").delete().eq("id", r.id).then(function () { refreshShareMembers(s); });
+            sb.from("subcategory_shares").delete().eq("id", r.id).then(function () {
+              refreshShareMembers(s);
+              loadSharesSummary().then(renderSubcats);
+            });
           });
           chip.appendChild(xBtn);
         }
@@ -1024,6 +1127,7 @@
       els.shareInviteEmail.value = "";
       els.shareInviteMsg.textContent = "";
       refreshShareMembers(sharingSubcat);
+      loadSharesSummary().then(renderSubcats);
     });
   });
 
@@ -1368,6 +1472,14 @@
 
   /* ---------- Settings ---------- */
   function renderSettings() {
+    els.profileSection.style.display = loggedIn ? "" : "none";
+    if (loggedIn) {
+      els.fProfNome.value = myProfile.nome || "";
+      els.fProfNasc.value = myProfile.data_nascimento || "";
+      els.fProfSexo.value = myProfile.sexo || "";
+      els.fProfAvatar.value = myProfile.avatar_url || "";
+      els.profileMsg.textContent = "";
+    }
     els.darkSwitch.classList.toggle("on", theme === "dark");
     els.categoryToggles.innerHTML = "";
     categories.forEach(function (c) {
@@ -1396,15 +1508,34 @@
     setTheme(next);
   });
 
+  els.saveProfile.addEventListener("click", function () {
+    if (!loggedIn) return;
+    var payload = {
+      nome: els.fProfNome.value.trim() || null,
+      data_nascimento: els.fProfNasc.value || null,
+      sexo: els.fProfSexo.value || null,
+      avatar_url: els.fProfAvatar.value.trim() || null
+    };
+    els.saveProfile.disabled = true;
+    els.profileMsg.textContent = "A guardar...";
+    sb.from("profiles").update(payload).eq("id", userId).then(function (res) {
+      els.saveProfile.disabled = false;
+      if (res.error) { els.profileMsg.textContent = "Não foi possível guardar o perfil."; return; }
+      myProfile = Object.assign({}, myProfile, payload);
+      els.profileMsg.textContent = "Perfil guardado.";
+    });
+  });
+
   /* ---------- Init ---------- */
   els.versionFooter.textContent = "Achievements " + APP_VERSION;
   recomputeEffective();
   renderAuth();
   renderCategoryStrip();
+  validateNav();
   renderAchView();
 })();
 </script>
 
-<!-- v0.12 -->
+<!-- v0.13 -->
 </body>
 </html>
